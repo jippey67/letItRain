@@ -1,0 +1,22 @@
+{
+  "name": "letitrain",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jippey67/letItRain.git"
+  },
+  "author": "Jeroen Walta",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jippey67/letItRain/issues"
+  },
+  "homepage": "https://github.com/jippey67/letItRain#readme",
+  "dependencies": {
+    "node-fetch": "^2.6.0"
+  }
+}
