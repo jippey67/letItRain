@@ -1,31 +1,40 @@
 const { exec } = require('child_process');
 const http = require('http');
-const getKMDdata = require('./getKMDdata');
+const json = require('json-simple');
 
 const minCCLlevel = 10; // all addresses with a balance below this value will be disregarded
-const transActCost = 10000; // satoshis
-const onKMDnode = false;
+const transActCost = 10000; // KMD transaction costs in satoshis
+const onKMDnode = false; // set to true if this program runs on a node that also runs the KMD daemon
+var richList
 
-sourceBalanceKMD = 0;
+const KMDbalanceParams = {
+  url:'78.47.111.191',
+  address: "RVKn8Fic9aFMzRBWAiJTD7mCHdWxL7aMa1"
+}
+
+const CCLrichlistParams = {
+  url:"88.198.156.129",
+  depth: 150
+}
+
+var sourceBalanceKMD = 0;
 if (onKMDnode) {
   sourceBalanceKMD = 10; // to be implemented
 } else {
-  let url = "http://78.47.111.191:3000/getaddressbalance%20'%7B%22addresses%22:%20[%22RVKn8Fic9aFMzRBWAiJTD7mCHdWxL7aMa1%22]%7D'";
-  http.get(url, (res) => {
+  const url1 = `http://${KMDbalanceParams.url}:3000/getaddressbalance%20'%7B%22addresses%22:%20[%22${KMDbalanceParams.address}%22]%7D'`;
+  http.get(url1, (res) => {
     let body = "";
     res.on("data", (chunk) => {
       body += chunk;
     });
     res.on("end", () => {
-      sourceBalanceKMD = getKMDdata.parse(body)
-      console.log(`The KMD balance is ${sourceBalanceKMD.balance}`);
+      sourceBalanceKMD = 0.00000001*json.decode(body).balance;
+      console.log(`The KMD balance is ${sourceBalanceKMD}`);
     });
   });
 }
 
-
-
-let url2 = "http://88.198.156.129:3000/getsnapshot%203";
+const url2 = `http://${CCLrichlistParams.url}:3000/-ac_name=CCL%20getsnapshot%20${CCLrichlistParams.depth}`;
 http.get(url2, (res) => {
   let body = "";
   res.on("data", (chunk) => {
@@ -33,9 +42,10 @@ http.get(url2, (res) => {
   });
 
   res.on("end", () => {
-    console.log(body);
-    let richList = getKMDdata.parse(body).addresses;
+    richList = json.decode(body).addresses;
     console.log(richList);
-    console.log(richList[1].amount);
+    if (richList[richList.length-1].amount >= parseFloat(minCCLlevel)) {
+      throw (`Possibly not all addresses with balance > minCCLlevel included in richList. Adapt minCCLlevel to continue!`);
+    }
   });
 });

@@ -1,17 +1,24 @@
-const parse = (stringToParse) => {
+const { exec } = require('child_process');
+const http = require('http');
+const json = require('json-simple');
 
-  let s1 = "\\n";
-  let s2 = "\\";
-  let s3 = "answer: ";
-  let t1 = '"{'
-  let t2 = "{"
-  let t3 = '}"'
-  let t4 = "}"
-
-  var newStr = stringToParse.split(s1).join("").split(s2).join("")
-    .replace(s3,"").replace(t1,t2).replace(t3,t4);
-
-  return JSON.parse(newStr);
+const chains = {
+  "KMD": "",
+  "CCL": "-ac_name=CCL"
 };
 
-exports.parse = parse;
+const obtainData = (ip, chain, request) => {
+  var url = `http://${ip}:3000/${chains[chain]} ${request}`;
+  http.get(url, (res) => {
+    let body = "";
+    res.on("data", (chunk) => {
+      body += chunk;
+    });
+    res.on("end", () => {
+      console.log(body);
+      return body;
+    });
+  });
+}
+
+exports.obtainData = obtainData;
