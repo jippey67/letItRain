@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/jippey67/letItRain#readme",
   "dependencies": {
+    "express": "^4.17.1",
     "json-simple": "^0.9.6",
     "node-fetch": "^2.6.0",
     "request": "^2.88.0"
