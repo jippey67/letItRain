@@ -5,7 +5,7 @@ const { exec } = require('child_process');
 
 app.get('/richlist/:depth', (req, res) => {
   var depth = req.params.depth;
-  var query = "~/komodo/src/komodo-cli%20-ac_name=CCL%20getsnapshot%20"+depth;
+  var query = `~/komodo/src/komodo-cli -ac_name=CCL getsnapshot ${depth}`;
   console.log(query);
   exec((query), (err, stdout, stderr) => {
     if(err) {
@@ -17,7 +17,7 @@ app.get('/richlist/:depth', (req, res) => {
 
 app.get('/balance/:address', (req, res) => {
   var kmdAddress = req.params.address;
-  var query = `~/komodo/src/komodo-cli%20getaddressbalance%20'%7B%22addresses%22:%20[%22${kmdAddress}%22]%7D'`;
+  var query = `~/komodo/src/komodo-cli getaddressbalance '{"addresses": ["${kmdAddress}"]}'`;
   console.log(query);
   exec((query), (err, stdout, stderr) => {
     if(err) {
