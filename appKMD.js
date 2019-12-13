@@ -12,7 +12,7 @@ exec((query), (err, stdout, stderr) => {
   if(err) {
     return;
   }
-  log(stdout);
+  console.log(stdout);
   const KMDbalance = 0.00000001*json.decode(stdout).balance
   console.log('balance:', KMDbalance);
   request(`http://88.198.156.129:3000/richlist/${richListDepth}`, function (error, response, body) {
