@@ -1,10 +1,11 @@
 var request = require('request');
 const json = require('json-simple');
+const { exec } = require('child_process');
 
 const minCCLlevel = 10; // all addresses with a balance below this value will be disregarded
-const transActFee = 0.00010000 // in KMD
-const kmdAddress = 'RVKn8Fic9aFMzRBWAiJTD7mCHdWxL7aMa1' //address to rain from
-const richListDepth = 150 //number of addresses to fetch, balance ordered descending
+const transActFee = 0.00010000; // in KMD
+const kmdAddress = 'RVKn8Fic9aFMzRBWAiJTD7mCHdWxL7aMa1'; //address to rain from
+const richListDepth = 150; //number of addresses to fetch, balance ordered descending
 
 request(`http://78.47.111.191:3000/balance/${kmdAddress}`, function (error, response, body) {
   if (error) {
