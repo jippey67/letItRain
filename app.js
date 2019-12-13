@@ -6,15 +6,27 @@ const minCCLlevel = 10; // all addresses with a balance below this value will be
 const transActFee = 0.00010000; // in KMD
 const kmdAddress = 'RVKn8Fic9aFMzRBWAiJTD7mCHdWxL7aMa1'; //address to rain from
 const richListDepth = 150; //number of addresses to fetch, balance ordered descending
+var onKMDnode = false; // default setting runs the program as if NOT on KMD full node
+if (process.argv[2]) {
+  const arguments = process.arg.slice(2);
+  arguments.forEach((item, index) => {
+    if (item == 'onKMD') {
+      onKMDnode = true;
+    }
+  });
+}
 
-request(`http://78.47.111.191:3000/balance/${kmdAddress}`, function (error, response, body) {
+//var getKMDnet = ()
+
+
+request(`http://78.47.111.191:3000/balance/${kmdAddress}`, (error, response, body) => {
   if (error) {
     console.log(`KMDserver error: ${error}`);
   }
   const KMDbalance = 0.00000001*json.decode(body).balance
   console.log('balance:', KMDbalance);
 
-  request(`http://88.198.156.129:3000/richlist/${richListDepth}`, function (error, response, body) {
+  request(`http://88.198.156.129:3000/richlist/${richListDepth}`, (error, response, body) => {
     if (error) {
       console.log(`CCLserver error: ${error}`);
     }

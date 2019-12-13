@@ -8,12 +8,12 @@ const kmdAddress = 'RVKn8Fic9aFMzRBWAiJTD7mCHdWxL7aMa1' //address to rain from
 const richListDepth = 150 //number of addresses to fetch, balance ordered descending
 
 const query = `~/komodo/src/komodo-cli getaddressbalance '{"addresses": ["${kmdAddress}"]}'`;
-exec((query), (err, stdout, stderr) => {
+exec((query), (err, body, stderr) => {
   if(err) {
     return;
   }
-  console.log(stdout);
-  const KMDbalance = 0.00000001*json.decode(stdout).balance
+  console.log(body);
+  const KMDbalance = 0.00000001*json.decode(body).balance
   console.log('balance:', KMDbalance);
   request(`http://88.198.156.129:3000/richlist/${richListDepth}`, function (error, response, body) {
     if (error) {
