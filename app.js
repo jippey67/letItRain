@@ -8,17 +8,20 @@ const transActFee = 0.00010000; // in KMD
 const kmdAddress = 'RVKn8Fic9aFMzRBWAiJTD7mCHdWxL7aMa1'; //address to rain from
 const richListDepth = 150; //number of addresses to fetch, balance ordered descending
 var requestKMD = request; // default setting runs the program as if NOT on KMD full node
+var requestStringKMD = `http://78.47.111.191:3000/balance/${kmdAddress}`;
 var requestCCL = request; // default setting runs the program as if NOT on CCL full node
-
+var requestStringCCL = `http://88.198.156.129:3000/richlist/${richListDepth}`;
 
 if (process.argv[2]) {
   const arguments = process.argv.slice(2);
   arguments.forEach((item, index) => {
-    if (item == 'onKMD') {
-      requestKMD = exec; // Get KMD balance through cli command if on KMD node
+    if (item == 'onKMD') { // Get KMD balance through cli command when on KMD node
+      requestKMD = exec;
+      requestStringKMD = `~/komodo/src/komodo-cli getaddressbalance '{"addresses": ["${kmdAddress}"]}'`;
     }
-    if (item == 'onCCL') {
-      requestCCL = exec; // Get CCL rich list through cli command if on CCL node
+    if (item == 'onCCL') { // Get CCL rich list through cli command when on CCL node
+      requestCCL = exec;
+      requestStringCCL = `~/komodo/src/komodo-cli -ac_name=CCL getsnapshot ${depth}`;
     }
   });
 }
