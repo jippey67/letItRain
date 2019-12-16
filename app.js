@@ -9,8 +9,10 @@ const kmdAddress = 'RVKn8Fic9aFMzRBWAiJTD7mCHdWxL7aMa1'; //address to rain from
 const richListDepth = 150; //number of addresses to fetch, balance ordered descending
 var requestKMD = request; // default setting runs the program as if NOT on KMD full node
 var requestStringKMD = `http://78.47.111.191:3000/balance/${kmdAddress}`;
+var swapVarKMD = false;
 var requestCCL = request; // default setting runs the program as if NOT on CCL full node
 var requestStringCCL = `http://88.198.156.129:3000/richlist/${richListDepth}`;
+var swapVarCCL = false;
 
 if (process.argv[2]) {
   const arguments = process.argv.slice(2);
@@ -18,10 +20,12 @@ if (process.argv[2]) {
     if (item == 'onKMD') { // Get KMD balance through cli command when on KMD node
       requestKMD = exec;
       requestStringKMD = `~/komodo/src/komodo-cli getaddressbalance '{"addresses": ["${kmdAddress}"]}'`;
+      swapVarKMD = true;
     }
     if (item == 'onCCL') { // Get CCL rich list through cli command when on CCL node
       requestCCL = exec;
       requestStringCCL = `~/komodo/src/komodo-cli -ac_name=CCL getsnapshot ${depth}`;
+      swapVarCCL = true;
     }
   });
 }
@@ -32,6 +36,9 @@ requestKMD(requestStringKMD, (error, response, body) => {
     console.log(`KMDserver error: ${error}`);
     return;
   }
+  if (swapVarKMD) {
+    body = response;
+  }
   // Get KMD balance in KMD instead of satoshi
   const KMDbalance = 0.00000001 * json.decode(body).balance
   console.log('balance:', KMDbalance);
@@ -41,6 +48,9 @@ requestKMD(requestStringKMD, (error, response, body) => {
     if (error) {
       console.log(`CCLserver error: ${error}`);
       return;
+    }
+    if (swapVarCCL) {
+      body = response;
     }
     const richList = json.decode(body).addresses;
     // Show message if result is truncated
