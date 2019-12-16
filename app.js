@@ -7,19 +7,24 @@ const minCCLlevel = 16000004; // all addresses with a balance below this value w
 const transActFee = 0.00010000; // in KMD
 const kmdAddress = 'RVKn8Fic9aFMzRBWAiJTD7mCHdWxL7aMa1'; //address to rain from
 const richListDepth = 150; //number of addresses to fetch, balance ordered descending
-var onKMDnode = false; // default setting runs the program as if NOT on KMD full node
+var requestKMD = request; // default setting runs the program as if NOT on KMD full node
+var requestCCL = request; // default setting runs the program as if NOT on CCL full node
+
 
 if (process.argv[2]) {
   const arguments = process.arg.slice(2);
   arguments.forEach((item, index) => {
     if (item == 'onKMD') {
-      onKMDnode = true;
+      requestKMD = exec; // Get KMD balance through cli command if on KMD node
+    }
+    if (item == 'onCCL') {
+      requestCCL = exec; // Get CCL rich list through cli command if on CCL node
     }
   });
 }
 
 // Check if sending address has a balance > 0
-request(`http://78.47.111.191:3000/balance/${kmdAddress}`, (error, response, body) => {
+requestKMD(`http://78.47.111.191:3000/balance/${kmdAddress}`, (error, response, body) => {
   if (error) {
     console.log(`KMDserver error: ${error}`);
     return;
@@ -29,7 +34,7 @@ request(`http://78.47.111.191:3000/balance/${kmdAddress}`, (error, response, bod
   console.log('balance:', KMDbalance);
 
   // Get CCL rich list
-  request(`http://88.198.156.129:3000/richlist/${richListDepth}`, (error, response, body) => {
+  requestCCL(`http://88.198.156.129:3000/richlist/${richListDepth}`, (error, response, body) => {
     if (error) {
       console.log(`CCLserver error: ${error}`);
       return;
@@ -52,13 +57,12 @@ request(`http://78.47.111.191:3000/balance/${kmdAddress}`, (error, response, bod
     const addressesToRainOn = richList.slice(0, addrPos);
     // Reserve some funds for tx fees
     const amountToRain = KMDbalance - (addrPos*transActFee);
-    var rainToAddresses = [];
     addressesToRainOn.forEach(function(item) {
       amountToReceive = Math.floor(parseFloat(item.amount)/sumOfBalances*amountToRain * 100000000); // in satoshis
-      rainToAddresses.push(amountToReceive);
+      item.rain = amountToReceive;
     });
     for (var i=0; i <= addressesToRainOn.length-1; i++) {
-      console.log(`Send ${rainToAddresses[i]} KMD satoshis to ${addressesToRainOn[i].addr} with a balance of ${addressesToRainOn[i].amount} CCL`);
+      console.log(`Send ${addressesToRainOn[i].rain} KMD satoshis to ${addressesToRainOn[i].addr} with a balance of ${addressesToRainOn[i].amount} CCL`);
     }
   });
 });
