@@ -27,7 +27,7 @@ if (process.argv[2]) {
 }
 
 // Check if sending address has a balance > 0
-requestKMD(`http://78.47.111.191:3000/balance/${kmdAddress}`, (error, response, body) => {
+requestKMD(requestStringKMD, (error, response, body) => {
   if (error) {
     console.log(`KMDserver error: ${error}`);
     return;
@@ -37,7 +37,7 @@ requestKMD(`http://78.47.111.191:3000/balance/${kmdAddress}`, (error, response, 
   console.log('balance:', KMDbalance);
 
   // Get CCL rich list
-  requestCCL(`http://88.198.156.129:3000/richlist/${richListDepth}`, (error, response, body) => {
+  requestCCL(requestStringCCL, (error, response, body) => {
     if (error) {
       console.log(`CCLserver error: ${error}`);
       return;
