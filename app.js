@@ -12,7 +12,7 @@ var requestCCL = request; // default setting runs the program as if NOT on CCL f
 
 
 if (process.argv[2]) {
-  const arguments = process.arg.slice(2);
+  const arguments = process.argv.slice(2);
   arguments.forEach((item, index) => {
     if (item == 'onKMD') {
       requestKMD = exec; // Get KMD balance through cli command if on KMD node
