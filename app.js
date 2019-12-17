@@ -124,7 +124,7 @@ requestKMD(requestStringKMD, (error, response, body) => {
         totaalTestAmount += 0.00000001 * testObject[i].rain
       };
       console.log(`amount to spend: ${utxoBalance}. KMDbalance: ${kmdBalance}`)
-      const wisselgeld = Math.floor(100000000 * (utxoBalance - totaalTestAmount - 0.0003))
+      const wisselgeld = 0.00000001 * parseInt(Math.floor(100000000 * (utxoBalance - totaalTestAmount - 0.0003)));
       console.log(`wisselgeld: ${wisselgeld}`);
       throw('errrrr');
       // create array of rain transactions
