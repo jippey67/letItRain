@@ -3,8 +3,9 @@ const json = require('json-simple');
 const { exec } = require('child_process');
 
 // Config
-const minCCLlevel = 10000000; // all addresses with a balance below this value will be disregarded
+const minCCLlevel = 10; // all addresses with a balance below this value will be disregarded
 const transActFee = 0.00010000; // in KMD
+const satoshisPerKMD = 100000000;
 const kmdAddress = 'RXEbBErWKAKvAbtdBvk9PivvHMejwstJbF'; //address to rain from
 const richListDepth = 150; //number of addresses to fetch, balance ordered descending
 var requestKMD = request; // default setting runs the program as if NOT on KMD full node
@@ -40,7 +41,7 @@ requestKMD(requestStringKMD, (error, response, body) => {
     body = response;
   }
   // Get KMD balance in KMD instead of satoshi
-  const kmdBalance = 0.00000001 * json.decode(body).balance
+  const kmdBalance = json.decode(body).balance/satoshisPerKMD;
   console.log('balance:', kmdBalance);
 
   // Get CCL rich list
@@ -75,7 +76,7 @@ requestKMD(requestStringKMD, (error, response, body) => {
       throw (`Balance - transaction fees doesn't leave funds to rain`);
     }
     addressesToRainOn.forEach(function(item) {
-      amountToReceive = Math.floor(parseFloat(item.amount)/sumOfBalances*amountToRain * 100000000); // in satoshis
+      amountToReceive = Math.floor(parseFloat(item.amount)/sumOfBalances*amountToRain * satoshisPerKMD); // in satoshis
       item.rain = amountToReceive;
     });
     for (var i=0; i <= addressesToRainOn.length-1; i++) {
@@ -121,16 +122,16 @@ requestKMD(requestStringKMD, (error, response, body) => {
       });
       for (var i=0; i <= testObject.length-1; i++) {
         console.log(`Send ${testObject[i].rain} KMD satoshis to ${testObject[i].addr} with a balance of ${testObject[i].amount} CCL`);
-        totaalTestAmount += 0.00000001 * testObject[i].rain
+        totaalTestAmount += testObject[i].rain/satoshisPerKMD
       };
       console.log(`amount to spend: ${utxoBalance}. KMDbalance: ${kmdBalance}`)
-      const wisselgeld = Math.floor(100000000 * (utxoBalance - totaalTestAmount - 0.0003))/100000000;
+      const wisselgeld = Math.floor(satoshisPerKMD * (utxoBalance - totaalTestAmount - 0.0003))/satoshisPerKMD;
       console.log(`wisselgeld: ${wisselgeld}`);
       throw('errrrr');
       // create array of rain transactions
       var rainTransactions = {};
       testObject.forEach(function(item) {
-        rainTransactions[item.addr.toString()] = 0.00000001 * item.rain;
+        rainTransactions[item.addr.toString()] = item.rain/satoshisPerKMD;
       });
       rainTransactions[kmdAddress] = wisselgeld;
 
@@ -172,17 +173,7 @@ requestKMD(requestStringKMD, (error, response, body) => {
             console.log(`An unsuccesful rawtransaction was created. It didn't rain today...`);
           }
         });
-
-
-
       });
-
     });
-
-
-
-
-
-
   });
 });
