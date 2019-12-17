@@ -98,8 +98,19 @@ requestKMD(requestStringKMD, (error, response, body) => {
     for (var i=0; i <= testObject.length-1; i++) {
       console.log(`Send ${testObject[i].rain} KMD satoshis to ${testObject[i].addr} with a balance of ${testObject[i].amount} CCL`);
     };
+    // create array of rain transactions
+    var rainTransactions = [];
+    testObject.forEach((item, index) => {
+      rainTransactions.push({
+        testObject.addr: 0.00000001 * testObject.rain
+      });
+    });
 
+    console.log(rainTransactions);
+
+    // create array of utxos to spend
     requestStringKMD = `~/komodo/src/komodo-cli listunspent 0 99999999  '["${kmdAddress}"]'`;
+    var utxoBalance = 0
     requestKMD(requestStringKMD, (error, response, body) => {
       if (error) {
         console.log(`KMDserver error: ${error}`);
@@ -112,13 +123,16 @@ requestKMD(requestStringKMD, (error, response, body) => {
 
       var transActUtxos = [];
       utxos.forEach((item, index) => {
+        utxoBalance += utxos[index].amount
         transActUtxos.push({
           "txid": utxos[index].txid,
           "vout": index
         });
       });
       console.log(transActUtxos);
-      
+      console.log(`amount to spend: ${utxoBalance}`)
+
+
     });
 
 
