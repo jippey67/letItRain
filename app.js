@@ -150,6 +150,19 @@ requestKMD(requestStringKMD, (error, response, body) => {
           const succes = response.complete;
           console.log(`transactString: ${transactionString}`);
           console.log(`complete?: ${succes}`);
+          if (succes) {
+            const sendTransactionString = `~/komodo/src/komodo-cli sendrawtransaction ${transactionString}`;
+            requestKMD(sendTransactionString, (error, response, body) => {
+              if (error) {
+                console.log(`KMDserver error: ${error}`);
+                return;
+              }
+              const transactionHash = response;
+              console.log(transactionHash);
+            })
+          } else {
+            console.log(`An unsuccesful rawtransaction was created. It didn't rain today...`);
+          }
         });
 
 
