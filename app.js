@@ -170,6 +170,9 @@ requestKMD(requestStringKMDbalance, (error, body, response) => {
               const transactionHash = body;
               console.log(`transactionHash: ${transactionHash}`);
             })
+          } else if (succes) {
+            console.log(`A successful rawtransaction was created, but not sent to the network.\n`);
+            console.log(`Run with parameters "production" and "realmoney" to rain the funds.`);
           } else {
             console.log(`An unsuccesful rawtransaction was created. It didn't rain today...`);
           }
