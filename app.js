@@ -159,7 +159,7 @@ requestKMD(requestStringKMDbalance, (error, body, response) => {
           body=json.decode(body);
           const transactionString = body.hex;
           const succes = body.complete;
-          if (succes && sendFunds) {
+          if (succes && (inDemoMode || sendFunds)) {
             // Send the transaction to the network
             const sendTransactionString = `~/komodo/src/komodo-cli sendrawtransaction ${transactionString}`;
             requestKMD(sendTransactionString, (error, body, response) => {
