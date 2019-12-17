@@ -145,8 +145,10 @@ requestKMD(requestStringKMD, (error, response, body) => {
             console.log(`KMDserver error: ${error}`);
             return;
           }
-          const transactionString = response;
-          console.log(transactionString);
+          const transactionString = response.hex;
+          const succes = response.complete;
+          console.log(`transactString: ${transactionString}`);
+          console.log(`complete?: ${succes}`);
         });
 
 
