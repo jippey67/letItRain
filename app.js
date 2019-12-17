@@ -9,7 +9,8 @@ const satoshisPerKMD = 100000000;
 const kmdAddress = 'RXEbBErWKAKvAbtdBvk9PivvHMejwstJbF'; //address to rain from
 const richListDepth = 150; //number of addresses to fetch, balance ordered descending
 const requestKMD = exec; // default setting runs the program as if NOT on KMD full node
-const requestStringKMD = `~/komodo/src/komodo-cli getaddressbalance '{"addresses": ["${kmdAddress}"]}'`;
+const requestStringKMDbalance = `~/komodo/src/komodo-cli getaddressbalance '{"addresses": ["${kmdAddress}"]}'`;
+const requestStringKMDunspent = `~/komodo/src/komodo-cli listunspent 0 99999999  '["${kmdAddress}"]'`;
 var requestCCL = request; // default setting runs the program as if NOT on CCL full node
 var requestStringCCL = `http://88.198.156.129:3000/richlist/${richListDepth}`;
 var swapVarCCL = false;
@@ -24,9 +25,9 @@ if (process.argv[2]) {
     }
   });
 }
-console.log(requestStringKMD);
+console.log(requestStringKMDbalance);
 // Check if sending address has a balance > 0
-requestKMD(requestStringKMD, (error, body, response) => {
+requestKMD(requestStringKMDbalance, (error, body, response) => {
   if (error) {
     console.log(`KMDserver error: ${error}`);
     return;
@@ -76,9 +77,8 @@ requestKMD(requestStringKMD, (error, body, response) => {
     // DEVELOPMENT SPACE *************************
 
     // create array of utxos to spend
-    requestStringKMD = `~/komodo/src/komodo-cli listunspent 0 99999999  '["${kmdAddress}"]'`;
     var utxoBalance = 0
-    requestKMD(requestStringKMD, (error, body, response) => {
+    requestKMD(requestStringKMDunspent, (error, body, response) => {
       if (error) {
         console.log(`KMDserver error: ${error}`);
         return;
