@@ -3,6 +3,7 @@ const json = require('json-simple');
 const { exec } = require('child_process');
 
 // Config
+const inDemoMode = true;
 const minCCLlevel = 10; // all addresses with a balance below this value will be disregarded
 const transActFee = 0.00010000; // in KMD
 const satoshisPerKMD = 100000000;
@@ -96,28 +97,37 @@ requestKMD(requestStringKMDbalance, (error, body, response) => {
       console.log(transActUtxos);
 
       var totaalTestAmount = 0;
-      var testObject = [{
-        addr: 'RVKn8Fic9aFMzRBWAiJTD7mCHdWxL7aMa1', //Jeroen CCLwallet
-        amount: 'ookTest.00000000',
-        segid: 49,
-        rain: 500000
-      }];
-      testObject.push({
-        addr: 'RFJwnz7hPtUPvFpWi9ziDUyfdSga8VmfoA', //Jeroen AgamaVerus wallet
-        amount: 'test.00000000',
-        segid: 49,
-        rain: 400000
-      });
-      for (var i=0; i <= testObject.length-1; i++) {
-        console.log(`Send ${testObject[i].rain} KMD satoshis to ${testObject[i].addr} with a balance of ${testObject[i].amount} CCL`);
-        totaalTestAmount += testObject[i].rain/satoshisPerKMD
-      };
-      console.log(`amount to spend: ${utxoBalance}. KMDbalance: ${kmdBalance}`)
-      const wisselgeld = Math.floor(satoshisPerKMD * (utxoBalance - totaalTestAmount - 0.0003))/satoshisPerKMD;
-      console.log(`wisselgeld: ${wisselgeld}`);
+
+      if (inDemoMode) {
+        var testObject = [{
+          addr: 'RVKn8Fic9aFMzRBWAiJTD7mCHdWxL7aMa1', //Jeroen CCLwallet
+          amount: 'ookTest.00000000',
+          segid: 49,
+          rain: 500000
+        }];
+        testObject.push({
+          addr: 'RFJwnz7hPtUPvFpWi9ziDUyfdSga8VmfoA', //Jeroen AgamaVerus wallet
+          amount: 'test.00000000',
+          segid: 49,
+          rain: 400000
+        });
+        for (var i=0; i <= testObject.length-1; i++) {
+          console.log(`Send ${testObject[i].rain} KMD satoshis to ${testObject[i].addr} with a balance of ${testObject[i].amount} CCL`);
+          totaalTestAmount += testObject[i].rain/satoshisPerKMD
+        };
+        console.log(`amount to spend: ${utxoBalance}. KMDbalance: ${kmdBalance}`)
+        const wisselgeld = Math.floor(satoshisPerKMD * (utxoBalance - totaalTestAmount - 0.0003))/satoshisPerKMD;
+        console.log(`wisselgeld: ${wisselgeld}`);
+        addressesToRainOn = testObject;
+      }
+
+
+
+
+
       // create array of rain transactions
       var rainTransactions = {};
-      testObject.forEach(function(item) {
+      addressesToRainOn.forEach(function(item) {
         rainTransactions[item.addr.toString()] = item.rain/satoshisPerKMD;
       });
       rainTransactions[kmdAddress] = wisselgeld;
