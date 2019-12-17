@@ -104,7 +104,7 @@ requestKMD(requestStringKMD, (error, response, body) => {
       console.log(item.addr);
 
       rainTransactions.push({
-        item.addr.toString(): 0.00000001 * item.rain
+        `"${item.addr.toString()}"`: 0.00000001 * item.rain
       });
 
     });
