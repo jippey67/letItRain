@@ -141,7 +141,7 @@ requestKMD(requestStringKMD, (error, response, body) => {
 
     // create RawTransactionString
     const RawTransactionString = `~/komodo/src/komodo-cli createrawtransaction '${transActUtxos}' 'rainTransactions'`;
-
+    console.log(RawTransactionString);
 
 
 
