@@ -106,10 +106,7 @@ requestKMD(requestStringKMD, (error, response, body) => {
       const rainObject = {};
       rainObject[key] = 0.00000001 * item.rain
       console.log(rainObject);
-      rainTransactions.push({
-        rainObject
-      });
-
+      rainTransactions.push(rainObject);
     });
 
     console.log(rainTransactions);
