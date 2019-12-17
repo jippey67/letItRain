@@ -3,9 +3,9 @@ const json = require('json-simple');
 const { exec } = require('child_process');
 
 // Config
-const minCCLlevel = 16000004; // all addresses with a balance below this value will be disregarded
+const minCCLlevel = 10; // all addresses with a balance below this value will be disregarded
 const transActFee = 0.00010000; // in KMD
-const kmdAddress = 'RVKn8Fic9aFMzRBWAiJTD7mCHdWxL7aMa1'; //address to rain from
+const kmdAddress = 'RXEbBErWKAKvAbtdBvk9PivvHMejwstJbF'; //address to rain from
 const richListDepth = 150; //number of addresses to fetch, balance ordered descending
 var requestKMD = request; // default setting runs the program as if NOT on KMD full node
 var requestStringKMD = `http://78.47.111.191:3000/balance/${kmdAddress}`;
@@ -70,6 +70,10 @@ requestKMD(requestStringKMD, (error, response, body) => {
     const addressesToRainOn = richList.slice(0, addrPos);
     // Reserve some funds for tx fees
     const amountToRain = KMDbalance - (addrPos*transActFee);
+    // Show message if no funds available to rain
+    if (amountToRain <= 0) {
+      throw (`Balance - transaction fees doesn't leave funds to rain`);
+    }
     addressesToRainOn.forEach(function(item) {
       amountToReceive = Math.floor(parseFloat(item.amount)/sumOfBalances*amountToRain * 100000000); // in satoshis
       item.rain = amountToReceive;
@@ -77,5 +81,44 @@ requestKMD(requestStringKMD, (error, response, body) => {
     for (var i=0; i <= addressesToRainOn.length-1; i++) {
       console.log(`Send ${addressesToRainOn[i].rain} KMD satoshis to ${addressesToRainOn[i].addr} with a balance of ${addressesToRainOn[i].amount} CCL`);
     }
+    // DEVELOPMENT SPACE *************************
+
+    var testObject = [{
+      addr: 'RVKn8Fic9aFMzRBWAiJTD7mCHdWxL7aMa1', //Jeroen CCLwallet
+      amount: 'ookTest.00000000',
+      segid: 49,
+      rain: 500000
+    }];
+    testObject.push({
+      addr: 'RXEbBErWKAKvAbtdBvk9PivvHMejwstJbF', //KMDnode wallet
+      amount: 'test.00000000',
+      segid: 49,
+      rain: 400000
+    });
+    for (var i=0; i <= testObject.length-1; i++) {
+      console.log(`Send ${testObject[i].rain} KMD satoshis to ${testObject[i].addr} with a balance of ${testObject[i].amount} CCL`);
+    };
+
+    requestStringKMD = `~/komodo/src/komodo-cli listunspent 0 99999999 '["${kmdAddress}"]'`;
+    requestKMD(requestStringKMD, (error, response, body) => {
+      if (error) {
+        console.log(`KMDserver error: ${error}`);
+        return;
+      }
+      if (swapVarKMD) {
+        body = response;
+      }
+      const utxos = json.decode(body)
+      console.log(utxos[0]);
+    })
+
+
+    //
+
+
+
+
+
+
   });
 });
