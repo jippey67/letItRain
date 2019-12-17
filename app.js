@@ -109,6 +109,8 @@ requestKMD(requestStringKMD, (error, response, body) => {
       }
       const utxos = json.decode(body)
       console.log(utxos[0]);
+      console.log(utxos.length);
+      /*
       var transActUtxos = [];
       utxos.forEach((item, index) => {
         transActUtxos.push({
@@ -117,6 +119,7 @@ requestKMD(requestStringKMD, (error, response, body) => {
         });
       });
       console.log(transActUtxos);
+      */
     });
 
 
