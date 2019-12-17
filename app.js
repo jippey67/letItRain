@@ -137,6 +137,14 @@ requestKMD(requestStringKMD, (error, response, body) => {
       // create RawTransactionString
       const RawTransactionString = `~/komodo/src/komodo-cli createrawtransaction '${JSON.stringify(transActUtxos)}' '${JSON.stringify(rainTransactions)}'`;
       console.log(RawTransactionString);
+      requestKMD(RawTransactionString, (error, response, body) => {
+        if (error) {
+          console.log(`KMDserver error: ${error}`);
+          return;
+        }
+        const rawHexString = response;
+        console.log(response);
+      })
 
     });
 
