@@ -3,7 +3,7 @@ const json = require('json-simple');
 const { exec } = require('child_process');
 
 // Config
-const inDemoMode = true;
+var inDemoMode = false;
 const minCCLlevel = 10; // all addresses with a balance below this value will be disregarded
 const transActFee = 0.00010000; // in KMD
 const satoshisPerKMD = 100000000;
@@ -151,6 +151,7 @@ requestKMD(requestStringKMDbalance, (error, body, response) => {
           const succes = body.complete;
           console.log(`transactString: ${transactionString}`);
           console.log(`complete?: ${succes}`);
+          /*
           if (succes) {
             const sendTransactionString = `~/komodo/src/komodo-cli sendrawtransaction ${transactionString}`;
             requestKMD(sendTransactionString, (error, body, response) => {
@@ -164,6 +165,7 @@ requestKMD(requestStringKMDbalance, (error, body, response) => {
           } else {
             console.log(`An unsuccesful rawtransaction was created. It didn't rain today...`);
           }
+          */
         });
       });
     });
