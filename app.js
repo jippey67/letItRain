@@ -107,6 +107,7 @@ requestKMD(requestStringKMD, (error, response, body) => {
       if (swapVarKMD) {
         body = response;
       }
+      console.log(body);
       const utxos = json.decode(body)
       console.log(utxos[0]);
       console.log(utxos.length);
