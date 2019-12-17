@@ -140,8 +140,7 @@ requestKMD(requestStringKMDbalance, (error, body, response) => {
             return;
           }
           console.log(body);
-          response=json.decode(body);
-
+          body=json.decode(body);
           const transactionString = body.hex;
           const succes = body.complete;
           console.log(`transactString: ${transactionString}`);
