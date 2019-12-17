@@ -127,16 +127,13 @@ requestKMD(requestStringKMD, (error, response, body) => {
       console.log(`amount to spend: ${utxoBalance}. KMDbalance: ${kmdBalance}`)
       const wisselgeld = Math.floor(satoshisPerKMD * (utxoBalance - totaalTestAmount - 0.0003))/satoshisPerKMD;
       console.log(`wisselgeld: ${wisselgeld}`);
-      throw('errrrr');
       // create array of rain transactions
       var rainTransactions = {};
       testObject.forEach(function(item) {
         rainTransactions[item.addr.toString()] = item.rain/satoshisPerKMD;
       });
       rainTransactions[kmdAddress] = wisselgeld;
-
       console.log(rainTransactions);
-
 
       // create RawTransactionString
       const rawTransactionString = `~/komodo/src/komodo-cli createrawtransaction '${JSON.stringify(transActUtxos)}' '${JSON.stringify(rainTransactions)}'`;
