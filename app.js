@@ -135,14 +135,12 @@ requestKMD(requestStringKMD, (error, response, body) => {
         });
       });
       console.log(transActUtxos);
-      console.log(`amount to spend: ${utxoBalance}`)
-
-
+      console.log(`amount to spend: ${utxoBalance}. KMDbalance: ${KMDbalance}`)
     });
 
 
-    //
-
+    // create RawTransactionString
+    const RawTransactionString = `~/komodo/src/komodo-cli createrawtransaction '${transActUtxos}' 'rainTransactions'`;
 
 
 
