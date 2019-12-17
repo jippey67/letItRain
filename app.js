@@ -29,7 +29,7 @@ if (process.argv[2]) {
     }
   });
 }
-
+console.log(requestStringKMD);
 // Check if sending address has a balance > 0
 requestKMD(requestStringKMD, (error, response, body) => {
   if (error) {
