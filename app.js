@@ -102,7 +102,7 @@ requestKMD(requestStringKMD, (error, response, body) => {
     var rainTransactions = [];
     testObject.forEach((item, index) => {
       rainTransactions.push({
-        testObject.addr: 0.00000001 * testObject.rain
+        testObject[index].addr: 0.00000001 * testObject[index].rain
       });
     });
 
