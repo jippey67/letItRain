@@ -3,7 +3,7 @@ const json = require('json-simple');
 const { exec } = require('child_process');
 
 // Config
-const minCCLlevel = 10; // all addresses with a balance below this value will be disregarded
+const minCCLlevel = 10000000; // all addresses with a balance below this value will be disregarded
 const transActFee = 0.00010000; // in KMD
 const kmdAddress = 'RXEbBErWKAKvAbtdBvk9PivvHMejwstJbF'; //address to rain from
 const richListDepth = 150; //number of addresses to fetch, balance ordered descending
@@ -99,9 +99,6 @@ requestKMD(requestStringKMD, (error, response, body) => {
       console.log(`Send ${testObject[i].rain} KMD satoshis to ${testObject[i].addr} with a balance of ${testObject[i].amount} CCL`);
     };
 
-    requestStringKMD = `~/komodo/src/komodo-cli listunspent 0 99999999  '''["RXEbBErWKAKvAbtdBvk9PivvHMejwstJbF"]'''`;
-    console.log(requestStringKMD);
-
     requestKMD(requestStringKMD, (error, response, body) => {
       if (error) {
         console.log(`KMDserver error: ${error}`);
@@ -112,8 +109,16 @@ requestKMD(requestStringKMD, (error, response, body) => {
       }
       const utxos = json.decode(body)
       console.log(utxos[0]);
-    })
-    
+      var transActUtxos = [];
+      utxos.forEach((item, index) => {
+        transActUtxos.push({
+          "txid": utxos[index].txid,
+          "vout": index
+        });
+      });
+      console.log(transActUtxos);
+    });
+
 
     //
 
