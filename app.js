@@ -40,8 +40,8 @@ requestKMD(requestStringKMD, (error, response, body) => {
     body = response;
   }
   // Get KMD balance in KMD instead of satoshi
-  const KMDbalance = 0.00000001 * json.decode(body).balance
-  console.log('balance:', KMDbalance);
+  const kmdBalance = 0.00000001 * json.decode(body).balance
+  console.log('balance:', kmdBalance);
 
   // Get CCL rich list
   requestCCL(requestStringCCL, (error, response, body) => {
@@ -69,7 +69,7 @@ requestKMD(requestStringKMD, (error, response, body) => {
     // Get addresses to rain on
     const addressesToRainOn = richList.slice(0, addrPos);
     // Reserve some funds for tx fees
-    const amountToRain = KMDbalance - (addrPos*transActFee);
+    const amountToRain = kmdBalance - (addrPos*transActFee);
     // Show message if no funds available to rain
     if (amountToRain <= 0) {
       throw (`Balance - transaction fees doesn't leave funds to rain`);
@@ -128,18 +128,29 @@ requestKMD(requestStringKMD, (error, response, body) => {
         });
       });
       console.log(transActUtxos);
-      console.log(`amount to spend: ${utxoBalance}. KMDbalance: ${KMDbalance}`)
+      console.log(`amount to spend: ${utxoBalance}. KMDbalance: ${kmdBalance}`)
       // create RawTransactionString
-      const RawTransactionString = `~/komodo/src/komodo-cli createrawtransaction '${JSON.stringify(transActUtxos)}' '${JSON.stringify(rainTransactions)}'`;
-      console.log(RawTransactionString);
-      requestKMD(RawTransactionString, (error, response, body) => {
+      const rawTransactionString = `~/komodo/src/komodo-cli createrawtransaction '${JSON.stringify(transActUtxos)}' '${JSON.stringify(rainTransactions)}'`;
+      console.log(rawTransactionString);
+      requestKMD(rawTransactionString, (error, response, body) => {
         if (error) {
           console.log(`KMDserver error: ${error}`);
           return;
         }
         const rawHexString = response;
-        console.log(response);
-      })
+        const signString = `~/komodo/src/komodo-cli signrawtransaction ${rawHexString}`;
+        requestKMD(signString, (error, response, body) => {
+          if (error) {
+            console.log(`KMDserver error: ${error}`);
+            return;
+          }
+          const transactionString = response;
+          console.log(transactionString);
+        });
+
+
+
+      });
 
     });
 
