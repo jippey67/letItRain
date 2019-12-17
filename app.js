@@ -99,7 +99,7 @@ requestKMD(requestStringKMD, (error, response, body) => {
       console.log(`Send ${testObject[i].rain} KMD satoshis to ${testObject[i].addr} with a balance of ${testObject[i].amount} CCL`);
     };
     // create array of rain transactions
-    var rainTransactions = [];
+    var rainTransactions = {};
     testObject.forEach(function(item) {
       console.log(item.addr);
       const key = item.addr.toString();
