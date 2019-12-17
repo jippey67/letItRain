@@ -99,7 +99,7 @@ requestKMD(requestStringKMD, (error, response, body) => {
       console.log(`Send ${testObject[i].rain} KMD satoshis to ${testObject[i].addr} with a balance of ${testObject[i].amount} CCL`);
     };
 
-    requestStringKMD = `~/komodo/src/komodo-cli listunspent 0 99999999 '["${kmdAddress}"]'`;
+    requestStringKMD = `./komodo-cli listunspent 0 99999999  '''["RXEbBErWKAKvAbtdBvk9PivvHMejwstJbF"]'''`;
     requestKMD(requestStringKMD, (error, response, body) => {
       if (error) {
         console.log(`KMDserver error: ${error}`);
