@@ -100,7 +100,7 @@ requestKMD(requestStringKMD, (error, response, body) => {
     };
     // create array of rain transactions
     var rainTransactions = [];
-    testObject.forEach((item, index) => {
+    testObject.forEach(function(item) {
       rainTransactions.push({
         item.addr: 0.00000001 * item.rain
       });
