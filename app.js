@@ -103,10 +103,11 @@ requestKMD(requestStringKMD, (error, response, body) => {
     testObject.forEach(function(item) {
       console.log(item.addr);
       const key = item.addr.toString();
-      rainObject = {};
+      const rainObject = {};
       rainObject[key] = 0.00000001 * item.rain
+      console.log(rainObject);
       rainTransactions.push({
-        rainObject.rainObject
+        rainObject
       });
 
     });
