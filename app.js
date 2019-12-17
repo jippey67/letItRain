@@ -90,7 +90,7 @@ requestKMD(requestStringKMD, (error, response, body) => {
       rain: 500000
     }];
     testObject.push({
-      addr: 'RXEbBErWKAKvAbtdBvk9PivvHMejwstJbF', //KMDnode wallet
+      addr: 'RFJwnz7hPtUPvFpWi9ziDUyfdSga8VmfoA', //Jeroen AgamaVerus wallet
       amount: 'test.00000000',
       segid: 49,
       rain: 400000
