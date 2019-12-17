@@ -4,6 +4,7 @@ const { exec } = require('child_process');
 
 // Config
 var inDemoMode = true;
+var sendFunds = false;
 const minCCLlevel = 10; // all addresses with a balance below this value will be disregarded
 const transActFee = 0.00010000; // in KMD
 const satoshisPerKMD = 100000000;
@@ -24,6 +25,12 @@ if (process.argv[2]) {
       requestCCL = exec;
       requestStringCCL = `~/komodo/src/komodo-cli -ac_name=CCL getsnapshot ${depth}`;
       swapVarCCL = true;
+    }
+    if (item == 'production') { // set it to rain real money.
+      inDemoMode = false;
+    }
+    if (item == 'realmoney') { // set it to rain real money.
+      sendFunds = true;
     }
   });
 }
@@ -129,7 +136,7 @@ requestKMD(requestStringKMDbalance, (error, body, response) => {
         rainTransactions[kmdAddress] = wisselgeld;
       }
 
-      console.log(`Rainstransactions: ${rainTransactions}`);
+      console.log(`Rainstransactions: ${JSON.stringify(rainTransactions)}`);
 
       // Create RawTransactionString
       const rawTransactionString = `~/komodo/src/komodo-cli createrawtransaction '${JSON.stringify(transActUtxos)}' '${JSON.stringify(rainTransactions)}'`;
@@ -152,7 +159,7 @@ requestKMD(requestStringKMDbalance, (error, body, response) => {
           body=json.decode(body);
           const transactionString = body.hex;
           const succes = body.complete;
-          if (succes) {
+          if (succes && sendFunds) {
             // Send the transaction to the network
             const sendTransactionString = `~/komodo/src/komodo-cli sendrawtransaction ${transactionString}`;
             requestKMD(sendTransactionString, (error, body, response) => {
@@ -161,7 +168,7 @@ requestKMD(requestStringKMDbalance, (error, body, response) => {
                 return;
               }
               const transactionHash = body;
-              console.log(transactionHash);
+              console.log(`transactionHash: ${transactionHash}`);
             })
           } else {
             console.log(`An unsuccesful rawtransaction was created. It didn't rain today...`);
