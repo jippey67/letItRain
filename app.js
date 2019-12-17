@@ -82,7 +82,7 @@ requestKMD(requestStringKMD, (error, response, body) => {
       console.log(`Send ${addressesToRainOn[i].rain} KMD satoshis to ${addressesToRainOn[i].addr} with a balance of ${addressesToRainOn[i].amount} CCL`);
     }
     // DEVELOPMENT SPACE *************************
-
+    var totaalTestAmount = 0;
     var testObject = [{
       addr: 'RVKn8Fic9aFMzRBWAiJTD7mCHdWxL7aMa1', //Jeroen CCLwallet
       amount: 'ookTest.00000000',
@@ -97,12 +97,17 @@ requestKMD(requestStringKMD, (error, response, body) => {
     });
     for (var i=0; i <= testObject.length-1; i++) {
       console.log(`Send ${testObject[i].rain} KMD satoshis to ${testObject[i].addr} with a balance of ${testObject[i].amount} CCL`);
+      totaalTestAmount += 0.00000001 * testObject[i].rain
     };
+    console.log(`amount to spend: ${utxoBalance}. KMDbalance: ${kmdBalance}`)
+    const wisselgeld = utxoBalance - totaalTestAmount - 0.0003
+
     // create array of rain transactions
     var rainTransactions = {};
     testObject.forEach(function(item) {
       rainTransactions[item.addr.toString()] = 0.00000001 * item.rain;
     });
+    rainTransactions[kmdAddress] = wisselgeld;
 
     console.log(rainTransactions);
 
@@ -128,7 +133,6 @@ requestKMD(requestStringKMD, (error, response, body) => {
         });
       });
       console.log(transActUtxos);
-      console.log(`amount to spend: ${utxoBalance}. KMDbalance: ${kmdBalance}`)
       // create RawTransactionString
       const rawTransactionString = `~/komodo/src/komodo-cli createrawtransaction '${JSON.stringify(transActUtxos)}' '${JSON.stringify(rainTransactions)}'`;
       console.log(rawTransactionString);
