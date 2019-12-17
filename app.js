@@ -101,7 +101,7 @@ requestKMD(requestStringKMD, (error, response, body) => {
         utxoBalance += utxos[index].amount
         transActUtxos.push({
           "txid": utxos[index].txid,
-          "vout": index
+          "vout": utxos[index].vout
         });
       });
       console.log(transActUtxos);
