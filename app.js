@@ -61,7 +61,7 @@ requestKMD(requestStringKMDbalance, (error, body, response) => {
     }
     console.log('sumOfBalances', sumOfBalances)
     // Get addresses to rain on
-    const addressesToRainOn = richList.slice(0, addrPos);
+    var addressesToRainOn = richList.slice(0, addrPos);
     // Reserve some funds for tx fees
     const amountToRain = kmdBalance - (addrPos*transActFee);
     // Show message if no funds available to rain
