@@ -99,9 +99,9 @@ requestKMD(requestStringKMD, (error, response, body) => {
       console.log(`Send ${testObject[i].rain} KMD satoshis to ${testObject[i].addr} with a balance of ${testObject[i].amount} CCL`);
     };
 
-    requestStringKMD = `./komodo-cli listunspent 0 99999999  '''["RXEbBErWKAKvAbtdBvk9PivvHMejwstJbF"]'''`;
+    requestStringKMD = `~/komodo/src/komodo-cli listunspent 0 99999999  '''["RXEbBErWKAKvAbtdBvk9PivvHMejwstJbF"]'''`;
     console.log(requestStringKMD);
-    /*
+
     requestKMD(requestStringKMD, (error, response, body) => {
       if (error) {
         console.log(`KMDserver error: ${error}`);
@@ -113,7 +113,7 @@ requestKMD(requestStringKMD, (error, response, body) => {
       const utxos = json.decode(body)
       console.log(utxos[0]);
     })
-    */
+    
 
     //
 
