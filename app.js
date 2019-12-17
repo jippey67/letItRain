@@ -138,6 +138,7 @@ requestKMD(requestStringKMD, (error, response, body) => {
           return;
         }
         const rawHexString = response;
+        console.log(`rawhexstring: ${rawHexString}`)
         const signString = `~/komodo/src/komodo-cli signrawtransaction ${rawHexString}`;
         requestKMD(signString, (error, response, body) => {
           if (error) {
