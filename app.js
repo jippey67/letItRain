@@ -8,9 +8,8 @@ const transActFee = 0.00010000; // in KMD
 const satoshisPerKMD = 100000000;
 const kmdAddress = 'RXEbBErWKAKvAbtdBvk9PivvHMejwstJbF'; //address to rain from
 const richListDepth = 150; //number of addresses to fetch, balance ordered descending
-var requestKMD = request; // default setting runs the program as if NOT on KMD full node
-var requestStringKMD = `http://78.47.111.191:3000/balance/${kmdAddress}`;
-var swapVarKMD = false;
+const requestKMD = exec; // default setting runs the program as if NOT on KMD full node
+const requestStringKMD = `~/komodo/src/komodo-cli getaddressbalance '{"addresses": ["${kmdAddress}"]}'`;
 var requestCCL = request; // default setting runs the program as if NOT on CCL full node
 var requestStringCCL = `http://88.198.156.129:3000/richlist/${richListDepth}`;
 var swapVarCCL = false;
@@ -18,11 +17,6 @@ var swapVarCCL = false;
 if (process.argv[2]) {
   const arguments = process.argv.slice(2);
   arguments.forEach((item, index) => {
-    if (item == 'onKMD') { // Get KMD balance through cli command when on KMD node
-      requestKMD = exec;
-      requestStringKMD = `~/komodo/src/komodo-cli getaddressbalance '{"addresses": ["${kmdAddress}"]}'`;
-      swapVarKMD = true;
-    }
     if (item == 'onCCL') { // Get CCL rich list through cli command when on CCL node
       requestCCL = exec;
       requestStringCCL = `~/komodo/src/komodo-cli -ac_name=CCL getsnapshot ${depth}`;
@@ -32,13 +26,10 @@ if (process.argv[2]) {
 }
 console.log(requestStringKMD);
 // Check if sending address has a balance > 0
-requestKMD(requestStringKMD, (error, response, body) => {
+requestKMD(requestStringKMD, (error, body, response) => {
   if (error) {
     console.log(`KMDserver error: ${error}`);
     return;
-  }
-  if (swapVarKMD) {
-    body = response;
   }
   // Get KMD balance in KMD instead of satoshi
   const kmdBalance = json.decode(body).balance/satoshisPerKMD;
@@ -87,13 +78,10 @@ requestKMD(requestStringKMD, (error, response, body) => {
     // create array of utxos to spend
     requestStringKMD = `~/komodo/src/komodo-cli listunspent 0 99999999  '["${kmdAddress}"]'`;
     var utxoBalance = 0
-    requestKMD(requestStringKMD, (error, response, body) => {
+    requestKMD(requestStringKMD, (error, body, response) => {
       if (error) {
         console.log(`KMDserver error: ${error}`);
         return;
-      }
-      if (swapVarKMD) {
-        body = response;
       }
       const utxos = json.decode(body)
 
@@ -138,32 +126,32 @@ requestKMD(requestStringKMD, (error, response, body) => {
       // create RawTransactionString
       const rawTransactionString = `~/komodo/src/komodo-cli createrawtransaction '${JSON.stringify(transActUtxos)}' '${JSON.stringify(rainTransactions)}'`;
       console.log(rawTransactionString);
-      requestKMD(rawTransactionString, (error, response, body) => {
+      requestKMD(rawTransactionString, (error, body, response) => {
         if (error) {
           console.log(`KMDserver error: ${error}`);
           return;
         }
-        const rawHexString = response;
+        const rawHexString = body;
         console.log(`rawhexstring: ${rawHexString}`)
         const signString = `~/komodo/src/komodo-cli signrawtransaction ${rawHexString}`;
-        requestKMD(signString, (error, response, body) => {
+        requestKMD(signString, (error, body, response) => {
           if (error) {
             console.log(`KMDserver error: ${error}`);
             return;
           }
-          response=json.decode(response);
-          const transactionString = response.hex;
-          const succes = response.complete;
+          response=json.decode(body);
+          const transactionString = body.hex;
+          const succes = body.complete;
           console.log(`transactString: ${transactionString}`);
           console.log(`complete?: ${succes}`);
           if (succes) {
             const sendTransactionString = `~/komodo/src/komodo-cli sendrawtransaction ${transactionString}`;
-            requestKMD(sendTransactionString, (error, response, body) => {
+            requestKMD(sendTransactionString, (error, body, response) => {
               if (error) {
                 console.log(`KMDserver error: ${error}`);
                 return;
               }
-              const transactionHash = response;
+              const transactionHash = body;
               console.log(transactionHash);
             })
           } else {
