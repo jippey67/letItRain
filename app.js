@@ -97,7 +97,7 @@ requestKMD(requestStringKMDbalance, (error, body, response) => {
       console.log(transActUtxos);
 
       var totaalTestAmount = 0;
-
+      var wisselgeld;
       if (inDemoMode) {
         var testObject = [{
           addr: 'RVKn8Fic9aFMzRBWAiJTD7mCHdWxL7aMa1', //Jeroen CCLwallet
@@ -116,14 +116,10 @@ requestKMD(requestStringKMDbalance, (error, body, response) => {
           totaalTestAmount += testObject[i].rain/satoshisPerKMD
         };
         console.log(`amount to spend: ${utxoBalance}. KMDbalance: ${kmdBalance}`)
-        const wisselgeld = Math.floor(satoshisPerKMD * (utxoBalance - totaalTestAmount - 0.0003))/satoshisPerKMD;
+        wisselgeld = Math.floor(satoshisPerKMD * (utxoBalance - totaalTestAmount - 0.0003))/satoshisPerKMD;
         console.log(`wisselgeld: ${wisselgeld}`);
         addressesToRainOn = testObject;
       }
-
-
-
-
 
       // create array of rain transactions
       var rainTransactions = {};
