@@ -101,6 +101,7 @@ requestKMD(requestStringKMDbalance, (error, body, response) => {
         });
       });
       console.log(`Transaction UTXOs: ${JSON.stringify(transActUtxos)}`);
+
       // Declaration of some variables used for test/demo purposes
       var totaalTestAmount = 0;
       var wisselgeld;
@@ -135,12 +136,10 @@ requestKMD(requestStringKMDbalance, (error, body, response) => {
       if (inDemoMode) { // Returns change to orginal address
         rainTransactions[kmdAddress] = wisselgeld;
       }
-
       console.log(`Rainstransactions: ${JSON.stringify(rainTransactions)}`);
 
-
       // Create RawTransactionString
-      if (!inDemoMode) {
+      if (!inDemoMode) { // check height of transaction fee
         const availableForTrasactionFees = utxoBalance - amountToRain;
         console.log(`Available for transaction fees: ${availableForTrasactionFees}`);
       }
