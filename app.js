@@ -85,7 +85,7 @@ requestKMD(requestStringKMDbalance, (error, body, response) => {
     }
     // Start creating the actual transactions
     // Create an array of utxos to spend
-    var utxoBalance = 0
+    var utxoBalance = 0 // Keeps track of the total balance available in the found UTXOs
     requestKMD(requestStringKMDunspent, (error, body, response) => {
       if (error) {
         console.log(`KMDserver error: ${error}`);
@@ -138,7 +138,12 @@ requestKMD(requestStringKMDbalance, (error, body, response) => {
 
       console.log(`Rainstransactions: ${JSON.stringify(rainTransactions)}`);
 
+
       // Create RawTransactionString
+      if (!inDemoMode) {
+        const availableForTrasactionFees = utxoBalance - amountToRain;
+        console.log(`Available for transaction fees: ${availableForTrasactionFees}`);
+      }
       const rawTransactionString = `~/komodo/src/komodo-cli createrawtransaction '${JSON.stringify(transActUtxos)}' '${JSON.stringify(rainTransactions)}'`;
       console.log(`rawTransactionString: ${rawTransactionString}`);
       requestKMD(rawTransactionString, (error, body, response) => {
