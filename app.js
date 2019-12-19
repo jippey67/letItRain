@@ -100,7 +100,7 @@ requestKMD(requestStringKMDbalance, (error, body, response) => {
           "vout": utxos[index].vout
         });
       });
-      console.log(`Transaction UTXOs: ${transActUtxos}`);
+      console.log(`Transaction UTXOs: ${JSON.stringify(transActUtxos)}`);
       // Declaration of some variables used for test/demo purposes
       var totaalTestAmount = 0;
       var wisselgeld;
