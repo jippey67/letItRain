@@ -23,7 +23,7 @@ if (process.argv[2]) {
   arguments.forEach((item, index) => {
     if (item == 'onCCL') { // Get CCL rich list through cli command when on CCL node
       requestCCL = exec;
-      requestStringCCL = `~/komodo/src/komodo-cli -ac_name=CCL getsnapshot ${depth}`;
+      requestStringCCL = `~/komodo/src/komodo-cli -ac_name=CCL getsnapshot ${richListDepth}`;
       swapVarCCL = true;
     }
     if (item == 'production') { // set it to rain real money.
