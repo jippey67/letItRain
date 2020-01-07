@@ -10,22 +10,17 @@ const transActFee = 0.00010000; // in KMD
 const satoshisPerKMD = 100000000;
 const kmdAddress = 'RXEbBErWKAKvAbtdBvk9PivvHMejwstJbF'; //address to rain from
 const richListDepth = 150; //number of addresses to fetch, balance ordered descending
-const requestKMD = exec; // default setting runs the program as if NOT on KMD full node
+const requestKMD = exec; // default setting runs the program as if on KMD full node
 const requestStringKMDbalance = `~/komodo/src/komodo-cli getaddressbalance '{"addresses": ["${kmdAddress}"]}'`;
 const requestStringKMDunspent = `~/komodo/src/komodo-cli listunspent 0 99999999  '["${kmdAddress}"]'`;
-var requestCCL = request; // default setting runs the program as if NOT on CCL full node
-var requestStringCCL = `http://88.198.156.129:3000/richlist/${richListDepth}`;
-var swapVarCCL = false;
+var requestCCL = exec; // default setting runs the program as if on CCL full node
+var requestStringCCL = `~/komodo/src/komodo-cli -ac_name=CCL getsnapshot ${richListDepth}`;
+var swapVarCCL = true;
 
 // handle parameters
 if (process.argv[2]) {
   const arguments = process.argv.slice(2);
   arguments.forEach((item, index) => {
-    if (item == 'onCCL') { // Get CCL rich list through cli command when on CCL node
-      requestCCL = exec;
-      requestStringCCL = `~/komodo/src/komodo-cli -ac_name=CCL getsnapshot ${richListDepth}`;
-      swapVarCCL = true;
-    }
     if (item == 'production') { // set it to rain real money.
       inDemoMode = false;
     }
@@ -51,10 +46,7 @@ requestKMD(requestStringKMDbalance, (error, body, response) => {
       console.log(`CCLserver error: ${error}`);
       return;
     }
-    if (swapVarCCL) {
-      body = response;
-    }
-    const richList = json.decode(body).addresses;
+    const richList = json.decode(response).addresses;
     // Show message if result is truncated
     if (richList[richList.length-1].amount >= minCCLlevel) {
       throw (`Possibly not all addresses with balance > minCCLlevel included in richList. Adapt richListDepth to continue! Current depth: ${richListDepth}`);
