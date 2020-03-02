@@ -19,7 +19,7 @@ var swapVarCCL = true;
 
 const distribute = () => {
 //module.exports = function () {
-  console.log('KMD distrubution started at:', new Date().getUTCHours())
+  console.log('KMD distrubution started at:', new Date())
   // Check if sending address has a balance > 0
   requestKMD(requestStringKMDbalance, (error, body, response) => {
     if (error) {
