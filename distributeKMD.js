@@ -18,6 +18,7 @@ var requestStringCCL = `~/komodo/src/komodo-cli -ac_name=CCL getsnapshot ${richL
 var swapVarCCL = true;
 
 module.exports = function () {
+  console.log('KMD distrubution started at:', new Date().getUTCHours()
   // Check if sending address has a balance > 0
   requestKMD(requestStringKMDbalance, (error, body, response) => {
     if (error) {
