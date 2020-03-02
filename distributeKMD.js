@@ -17,7 +17,7 @@ var requestCCL = exec; // default setting runs the program as if on CCL full nod
 var requestStringCCL = `~/komodo/src/komodo-cli -ac_name=CCL getsnapshot ${richListDepth}`;
 var swapVarCCL = true;
 
-const distribute = function () {
+const distribute = () => {
 //module.exports = function () {
   console.log('KMD distrubution started at:', new Date().getUTCHours())
   // Check if sending address has a balance > 0
