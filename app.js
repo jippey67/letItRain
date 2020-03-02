@@ -1,3 +1,19 @@
+const distributeKMD = require('./distributeKMD')
+
+distributeKMD()
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 var request = require('request');
 const json = require('json-simple');
 const { exec } = require('child_process');
@@ -177,3 +193,5 @@ requestKMD(requestStringKMDbalance, (error, body, response) => {
     });
   });
 });
+
+*/
