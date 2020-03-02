@@ -126,14 +126,14 @@ module.exports = function () {
           console.log(`Available for transaction fees: ${availableForTrasactionFees}`);
         }
         const rawTransactionString = `~/komodo/src/komodo-cli createrawtransaction '${JSON.stringify(transActUtxos)}' '${JSON.stringify(rainTransactions)}'`;
-        console.log(`rawTransactionString: ${rawTransactionString}`);
+        //console.log(`rawTransactionString: ${rawTransactionString}`);
         requestKMD(rawTransactionString, (error, body, response) => {
           if (error) {
             console.log(`KMDserver error: ${error}`);
             return;
           }
           const rawHexString = body;
-          console.log(`rawHexString: ${rawHexString}`)
+          //console.log(`rawHexString: ${rawHexString}`)
           // Sign transaction
           const signString = `~/komodo/src/komodo-cli signrawtransaction ${rawHexString}`;
           requestKMD(signString, (error, body, response) => {
@@ -141,7 +141,7 @@ module.exports = function () {
               console.log(`KMDserver error: ${error}`);
               return;
             }
-            console.log(`Transaction object: ${body}`);
+            //console.log(`Transaction object: ${body}`);
             body=json.decode(body);
             const transactionString = body.hex;
             const succes = body.complete;
