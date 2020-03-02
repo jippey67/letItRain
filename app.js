@@ -1,8 +1,8 @@
 const {millisToNoon, millisToMidnight} = require('./timing')
-const distributeKMD = require('./distributeKMD')
+const {distribute} = require('./distributeKMD')
 
 while (true) {
-  setTimeout(distributeKMD.distribute(), millisToMidnight)
+  setTimeout(distribute(), millisToMidnight)
 }
 
 
