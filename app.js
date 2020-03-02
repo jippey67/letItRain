@@ -4,7 +4,7 @@ const distributeKMD = require('./distributeKMD')
 while (true) {
   setTimeout(distributeKMD(), millisToMidnight)
 }
-distributeKMD()
+
 
 
 
