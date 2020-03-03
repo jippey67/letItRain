@@ -14,7 +14,7 @@ const requestKMD = exec; // default setting runs the program as if on KMD full n
 const requestStringKMDbalance = `~/komodo/src/komodo-cli getaddressbalance '{"addresses": ["${kmdAddress}"]}'`;
 const requestStringKMDunspent = `~/komodo/src/komodo-cli listunspent 0 99999999  '["${kmdAddress}"]'`;
 var requestCCL = exec; // default setting runs the program as if on CCL full node
-var requestStringCCL = `~/komodo/src/komodo-cli -ac_name=CCL getsnapshot ${richListDepth}`;
+var requestStringCCL = `~/komodo/src/komodo-cli -ac_name=CCL getsnapshot` // ${richListDepth}`;
 var swapVarCCL = true;
 
 const distribute = () => {
