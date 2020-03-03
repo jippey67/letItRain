@@ -11,21 +11,6 @@ const rain = () => {
 rain()
 
 
-
-
-
-const rain = async () => {
-  await setTimeout(() => {
-    console.log('stap1',new Date())
-    rain()
-    //setInterval(() => console.log('stap2',new Date()), 3000)
-  }, 2000) // wait to midnight for first distrubution
-   // repeat the process every 24 hours
-}
-
-rain()
-
-
 /*
 var request = require('request');
 const json = require('json-simple');
