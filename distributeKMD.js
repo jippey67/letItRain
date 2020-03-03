@@ -170,4 +170,4 @@ const distribute = () => {
   });
 }
 
-module.exports = distribute
+module.exports.distribute = distribute
