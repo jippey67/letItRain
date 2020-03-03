@@ -1,11 +1,26 @@
 const {millisToNoon, millisToMidnight} = require('./timing')
 const {distribute} = require('./distributeKMD')
 
+const rain = () => {
+  setTimeout(() => {
+    distribute() // wait to midnight for first distrubution
+    rain() // repeat the process every 24 hours
+  }, 120000) //millisToMidnight)
+}
+
+rain()
+
+
+
+
+
 const rain = async () => {
   await setTimeout(() => {
-    distribute() // wait to midnight for first distrubution
-    setInterval(() => distribute(), 1000*60*60*24) // repeat the process every 24 hours
-  }, millisToMidnight)
+    console.log('stap1',new Date())
+    rain()
+    //setInterval(() => console.log('stap2',new Date()), 3000)
+  }, 2000) // wait to midnight for first distrubution
+   // repeat the process every 24 hours
 }
 
 rain()
