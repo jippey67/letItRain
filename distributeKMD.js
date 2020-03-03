@@ -63,9 +63,11 @@ const distribute = () => {
         amountToReceive = Math.floor(parseFloat(item.amount)/sumOfBalances*amountToRain * satoshisPerKMD); // in satoshis
         item.rain = amountToReceive;
       });
+      /*
       for (var i=0; i <= addressesToRainOn.length-1; i++) {
         console.log(`Send ${addressesToRainOn[i].rain} KMD satoshis to ${addressesToRainOn[i].addr} with a balance of ${addressesToRainOn[i].amount} CCL`);
       }
+      */
       // Start creating the actual transactions
       // Create an array of utxos to spend
       var utxoBalance = 0 // Keeps track of the total balance available in the found UTXOs
@@ -83,7 +85,7 @@ const distribute = () => {
             "vout": utxos[index].vout
           });
         });
-        console.log(`Transaction UTXOs: ${JSON.stringify(transActUtxos)}`);
+        //console.log(`Transaction UTXOs: ${JSON.stringify(transActUtxos)}`);
 
         // Declaration of some variables used for test/demo purposes
         var totaalTestAmount = 0;
@@ -119,7 +121,7 @@ const distribute = () => {
         if (inDemoMode) { // Returns change to orginal address
           rainTransactions[kmdAddress] = wisselgeld;
         }
-        console.log(`Rainstransactions: ${JSON.stringify(rainTransactions)}`);
+        //console.log(`Rainstransactions: ${JSON.stringify(rainTransactions)}`);
 
         // Create RawTransactionString
         if (!inDemoMode) { // check height of transaction fee
