@@ -5,7 +5,7 @@ const rain = () => {
   setTimeout(() => {
     distribute() // wait to midnight for first distrubution
     rain() // repeat the process every 24 hours
-  }, 120000) //millisToMidnight)
+  }, millisToMidnight) //millisToMidnight)
 }
 
 rain()

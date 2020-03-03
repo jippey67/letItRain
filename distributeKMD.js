@@ -4,7 +4,7 @@ const { exec } = require('child_process');
 
 // Config
 var inDemoMode = false;
-var sendFunds = false;
+var sendFunds = true;
 const minCCLlevel = 10; // all addresses with a balance below this value will be disregarded
 const transActFee = 0.00010000; // in KMD
 const satoshisPerKMD = 100000000;
