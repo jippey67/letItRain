@@ -63,11 +63,6 @@ const distribute = () => {
         amountToReceive = Math.floor(parseFloat(item.amount)/sumOfBalances*amountToRain * satoshisPerKMD); // in satoshis
         item.rain = amountToReceive;
       });
-      /*
-      for (var i=0; i <= addressesToRainOn.length-1; i++) {
-        console.log(`Send ${addressesToRainOn[i].rain} KMD satoshis to ${addressesToRainOn[i].addr} with a balance of ${addressesToRainOn[i].amount} CCL`);
-      }
-      */
       // Start creating the actual transactions
       // Create an array of utxos to spend
       var utxoBalance = 0 // Keeps track of the total balance available in the found UTXOs
@@ -87,32 +82,6 @@ const distribute = () => {
         });
         //console.log(`Transaction UTXOs: ${JSON.stringify(transActUtxos)}`);
 
-        // // Declaration of some variables used for test/demo purposes
-        // var totaalTestAmount = 0;
-        // var wisselgeld;
-        // // Create demo mode testObject to replace addressesToRainOn
-        // if (inDemoMode) {
-        //   var testObject = [{
-        //     addr: 'RVKn8Fic9aFMzRBWAiJTD7mCHdWxL7aMa1', //Jeroen CCLwallet
-        //     amount: 'ookTest.00000000',
-        //     segid: 49,
-        //     rain: 500000
-        //   }];
-        //   testObject.push({
-        //     addr: 'RFJwnz7hPtUPvFpWi9ziDUyfdSga8VmfoA', //Jeroen AgamaVerus wallet
-        //     amount: 'test.00000000',
-        //     segid: 49,
-        //     rain: 400000
-        //   });
-        //   for (var i=0; i <= testObject.length-1; i++) {
-        //     console.log(`Send ${testObject[i].rain} KMD satoshis to ${testObject[i].addr} with a balance of ${testObject[i].amount} CCL`);
-        //     totaalTestAmount += testObject[i].rain/satoshisPerKMD
-        //   };
-        //   wisselgeld = Math.floor(satoshisPerKMD * (utxoBalance - totaalTestAmount - 0.0003))/satoshisPerKMD;
-        //   console.log(`wisselgeld: ${wisselgeld}`);
-        //   addressesToRainOn = testObject;
-        // }
-
         // create array of rain transactions
         var rainTransactions = {};
         addressesToRainOn.forEach(function(item) {
@@ -120,16 +89,6 @@ const distribute = () => {
             rainTransactions[item.addr.toString()] = item.rain/satoshisPerKMD;
           }
         });
-        // if (inDemoMode) { // Returns change to orginal address
-        //   rainTransactions[kmdAddress] = wisselgeld;
-        // }
-        //console.log(`Rainstransactions: ${JSON.stringify(rainTransactions)}`);
-
-        // Create RawTransactionString
-        // if (!inDemoMode) { // check height of transaction fee
-        //   const availableForTrasactionFees = utxoBalance - amountToRain;
-        //   console.log(`Available for transaction fees: ${availableForTrasactionFees}`);
-        // }
         const rawTransactionString = `~/komodo/src/komodo-cli createrawtransaction '${JSON.stringify(transActUtxos)}' '${JSON.stringify(rainTransactions)}'`;
         //console.log(`rawTransactionString: ${rawTransactionString}`);
         requestKMD(rawTransactionString, (error, body, response) => {
