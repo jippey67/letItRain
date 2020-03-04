@@ -1,11 +1,20 @@
 const {millisToNoon, millisToMidnight} = require('./timing')
 const {distribute} = require('./distributeKMD')
 
+// const rain = () => {
+//   setTimeout(() => {
+//     distribute() // wait to midnight for first distrubution
+//     rain() // repeat the process every 24 hours
+//   }, millisToMidnight) //millisToMidnight)
+// }
+
 const rain = () => {
   setTimeout(() => {
     distribute() // wait to midnight for first distrubution
-    rain() // repeat the process every 24 hours
-  }, millisToMidnight) //millisToMidnight)
+    setInterval(() => {
+      distribute()  
+    }, 180000) // repeat the process every 24 hours
+  }, 5000) //millisToMidnight)
 }
 
 rain()
