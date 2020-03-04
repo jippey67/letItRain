@@ -3,13 +3,13 @@ const json = require('json-simple');
 const { exec } = require('child_process');
 
 // Config
-var inDemoMode = false;
-var sendFunds = true;
-const minCCLlevel = 100000; // all addresses with a balance below this value will be disregarded
-const transActFee = 0.00010000; // in KMD
+var sendFunds = true; // when true funds are sent, otherwise the RawTransactionString isn't sent to the network
+const minCCLlevel = 10; // all addresses with a balance below this value will be disregarded
+const transActFee = 0.0001; // in KMD
+const minimumPayout = 0.0001; // payouts below this level are ignored
 const satoshisPerKMD = 100000000;
 const kmdAddress = 'RXEbBErWKAKvAbtdBvk9PivvHMejwstJbF'; //address to rain from
-const richListDepth = 150; //number of addresses to fetch, balance ordered descending
+//const richListDepth = 150; //number of addresses to fetch, balance ordered descending
 const requestKMD = exec; // default setting runs the program as if on KMD full node
 const requestStringKMDbalance = `~/komodo/src/komodo-cli getaddressbalance '{"addresses": ["${kmdAddress}"]}'`;
 const requestStringKMDunspent = `~/komodo/src/komodo-cli listunspent 0 99999999  '["${kmdAddress}"]'`;
@@ -55,7 +55,7 @@ const distribute = () => {
       const amountToRain = kmdBalance - (addrPos*transActFee);
       // Show message if no funds are available to rain
       if (amountToRain <= 0) {
-        console.log(`Balance - transaction fees doesn't leave funds to rain`);
+        console.log(`Insufficient balance to rain`);
         return
       }
       // Add amounts to rain to addressesToRainOn object
@@ -87,47 +87,49 @@ const distribute = () => {
         });
         //console.log(`Transaction UTXOs: ${JSON.stringify(transActUtxos)}`);
 
-        // Declaration of some variables used for test/demo purposes
-        var totaalTestAmount = 0;
-        var wisselgeld;
-        // Create demo mode testObject to replace addressesToRainOn
-        if (inDemoMode) {
-          var testObject = [{
-            addr: 'RVKn8Fic9aFMzRBWAiJTD7mCHdWxL7aMa1', //Jeroen CCLwallet
-            amount: 'ookTest.00000000',
-            segid: 49,
-            rain: 500000
-          }];
-          testObject.push({
-            addr: 'RFJwnz7hPtUPvFpWi9ziDUyfdSga8VmfoA', //Jeroen AgamaVerus wallet
-            amount: 'test.00000000',
-            segid: 49,
-            rain: 400000
-          });
-          for (var i=0; i <= testObject.length-1; i++) {
-            console.log(`Send ${testObject[i].rain} KMD satoshis to ${testObject[i].addr} with a balance of ${testObject[i].amount} CCL`);
-            totaalTestAmount += testObject[i].rain/satoshisPerKMD
-          };
-          wisselgeld = Math.floor(satoshisPerKMD * (utxoBalance - totaalTestAmount - 0.0003))/satoshisPerKMD;
-          console.log(`wisselgeld: ${wisselgeld}`);
-          addressesToRainOn = testObject;
-        }
+        // // Declaration of some variables used for test/demo purposes
+        // var totaalTestAmount = 0;
+        // var wisselgeld;
+        // // Create demo mode testObject to replace addressesToRainOn
+        // if (inDemoMode) {
+        //   var testObject = [{
+        //     addr: 'RVKn8Fic9aFMzRBWAiJTD7mCHdWxL7aMa1', //Jeroen CCLwallet
+        //     amount: 'ookTest.00000000',
+        //     segid: 49,
+        //     rain: 500000
+        //   }];
+        //   testObject.push({
+        //     addr: 'RFJwnz7hPtUPvFpWi9ziDUyfdSga8VmfoA', //Jeroen AgamaVerus wallet
+        //     amount: 'test.00000000',
+        //     segid: 49,
+        //     rain: 400000
+        //   });
+        //   for (var i=0; i <= testObject.length-1; i++) {
+        //     console.log(`Send ${testObject[i].rain} KMD satoshis to ${testObject[i].addr} with a balance of ${testObject[i].amount} CCL`);
+        //     totaalTestAmount += testObject[i].rain/satoshisPerKMD
+        //   };
+        //   wisselgeld = Math.floor(satoshisPerKMD * (utxoBalance - totaalTestAmount - 0.0003))/satoshisPerKMD;
+        //   console.log(`wisselgeld: ${wisselgeld}`);
+        //   addressesToRainOn = testObject;
+        // }
 
         // create array of rain transactions
         var rainTransactions = {};
         addressesToRainOn.forEach(function(item) {
-          rainTransactions[item.addr.toString()] = item.rain/satoshisPerKMD;
+          if (item.rain/satoshisPerKMD >= minimumPayout) {
+            rainTransactions[item.addr.toString()] = item.rain/satoshisPerKMD;
+          }
         });
-        if (inDemoMode) { // Returns change to orginal address
-          rainTransactions[kmdAddress] = wisselgeld;
-        }
+        // if (inDemoMode) { // Returns change to orginal address
+        //   rainTransactions[kmdAddress] = wisselgeld;
+        // }
         //console.log(`Rainstransactions: ${JSON.stringify(rainTransactions)}`);
 
         // Create RawTransactionString
-        if (!inDemoMode) { // check height of transaction fee
-          const availableForTrasactionFees = utxoBalance - amountToRain;
-          console.log(`Available for transaction fees: ${availableForTrasactionFees}`);
-        }
+        // if (!inDemoMode) { // check height of transaction fee
+        //   const availableForTrasactionFees = utxoBalance - amountToRain;
+        //   console.log(`Available for transaction fees: ${availableForTrasactionFees}`);
+        // }
         const rawTransactionString = `~/komodo/src/komodo-cli createrawtransaction '${JSON.stringify(transActUtxos)}' '${JSON.stringify(rainTransactions)}'`;
         //console.log(`rawTransactionString: ${rawTransactionString}`);
         requestKMD(rawTransactionString, (error, body, response) => {
@@ -148,7 +150,7 @@ const distribute = () => {
             body=json.decode(body);
             const transactionString = body.hex;
             const succes = body.complete;
-            if (succes && (inDemoMode || sendFunds)) {
+            if (succes && sendFunds) {
               // Send the transaction to the network
               const sendTransactionString = `~/komodo/src/komodo-cli sendrawtransaction ${transactionString}`;
               requestKMD(sendTransactionString, (error, body, response) => {
