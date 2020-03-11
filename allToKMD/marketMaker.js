@@ -123,7 +123,7 @@ module.exports.cancelOrders = () => {
           }
           console.log(`canceled order ${uuid}: `+stdout);
       });
-    }
+    })
   })
 }
 
