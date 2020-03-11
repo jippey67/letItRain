@@ -1,6 +1,7 @@
 var request = require('request');
 const json = require('json-simple');
 const { exec } = require('child_process');
+const ltf = require('./logToFile')
 
 // Config
 var sendFunds = true; // when true funds are sent, otherwise the RawTransactionString isn't sent to the network
@@ -19,7 +20,7 @@ var swapVarCCL = true;
 
 const distribute = () => {
 //module.exports = function () {
-  console.log('KMD distrubution started at:', new Date())
+  ltf.log('KMD distrubution started at:', new Date())
   // Check if sending address has a balance > 0
   requestKMD(requestStringKMDbalance, (error, body, response) => {
     if (error) {
@@ -28,7 +29,7 @@ const distribute = () => {
     }
     // Get KMD balance in KMD instead of satoshi
     const kmdBalance = json.decode(body).balance/satoshisPerKMD;
-    console.log('balance:', kmdBalance);
+    ltf.log('balance:', kmdBalance);
 
     // Get CCL rich list
     requestCCL(requestStringCCL, (error, response, body) => {
@@ -55,7 +56,7 @@ const distribute = () => {
       const amountToRain = kmdBalance - (addrPos*transActFee);
       // Show message if no funds are available to rain
       if (amountToRain <= 0) {
-        console.log(`Insufficient balance to rain`);
+        ltf.log(`Insufficient balance to rain`);
         return
       }
       // Add amounts to rain to addressesToRainOn object
@@ -80,7 +81,7 @@ const distribute = () => {
             "vout": utxos[index].vout
           });
         });
-        //console.log(`Transaction UTXOs: ${JSON.stringify(transActUtxos)}`);
+        ltf.log(`Transaction UTXOs: ${JSON.stringify(transActUtxos)}`);
 
         // create array of rain transactions
         var rainTransactions = {};
@@ -90,14 +91,14 @@ const distribute = () => {
           }
         });
         const rawTransactionString = `~/komodo/src/komodo-cli createrawtransaction '${JSON.stringify(transActUtxos)}' '${JSON.stringify(rainTransactions)}'`;
-        //console.log(`rawTransactionString: ${rawTransactionString}`);
+        ltf.log(`rawTransactionString: ${rawTransactionString}`);
         requestKMD(rawTransactionString, (error, body, response) => {
           if (error) {
             console.log(`KMDserver error: ${error}`);
             return;
           }
           const rawHexString = body;
-          //console.log(`rawHexString: ${rawHexString}`)
+          ltf.log(`rawHexString: ${rawHexString}`)
           // Sign transaction
           const signString = `~/komodo/src/komodo-cli signrawtransaction ${rawHexString}`;
           requestKMD(signString, (error, body, response) => {
@@ -105,7 +106,7 @@ const distribute = () => {
               console.log(`KMDserver error: ${error}`);
               return;
             }
-            //console.log(`Transaction object: ${body}`);
+            ltf.log.log(`Transaction object: ${body}`);
             body=json.decode(body);
             const transactionString = body.hex;
             const succes = body.complete;
@@ -118,7 +119,7 @@ const distribute = () => {
                   return;
                 }
                 const transactionHash = body;
-                console.log(`transactionHash: ${transactionHash}`);
+                ltf.log(`transactionHash: ${transactionHash}`);
               })
             } else if (succes) {
               console.log(`A successful rawtransaction was created, but not sent to the network.\n`);
