@@ -52,7 +52,7 @@ module.exports.placeOrder = (coin, kmdCoin) => {
         console.log('Error code: '+error.code);
         console.log('Signal received: '+error.signal);
       }
-      console.log('Child Process STDOUT: '+stdout);
+      console.log('placed order: '+stdout);
     })
   }
 }
@@ -67,7 +67,7 @@ module.exports.viewOrders = () => {
       console.log('Error code: '+error.code);
       console.log('Signal received: '+error.signal);
     }
-    console.log('Open orders: '+stdout);
+    console.log('Open orders: '+JSON.parse(stdout).result.maker_orders);
   })
 }
 
@@ -82,14 +82,20 @@ module.exports.cancelOrders = () => {
       console.log('Signal received: '+error.signal);
     }
     console.log('Open orders: '+stdout);
-    const myOrderBook = stdout //what happens if no orders?
-    //iterate over orders, obtain uuid and cancel with command below
-
-
-    // var uuid = '6621efd5-72dd-422c-89a8-7b655b744ead'
-    // const url = `"http://127.0.0.1:7783" --data "{\\"userpass\\":\\"${userpass}\\",\\"method\\":\\"cancel_order\\",\\"uuid\\":\\"${uuid}\\"}"`
-    // const command = `curl --url ` + url
-    // console.log(command)
+    const myOrderBook = JSON.parse(stdout).result.maker_orders
+    if (Object.keys(myOrderBook).length > 0) {
+      Object.keys(myOrderBook).forEach((uuid, i) => {
+        const url = `"http://127.0.0.1:7783" --data "{\\"userpass\\":\\"${userpass}\\",\\"method\\":\\"cancel_order\\",\\"uuid\\":\\"${uuid}\\"}"`
+        const command = `curl --url ` + url
+        exec(command, function (error, stdout, stderr) {
+          if (error) {
+            console.log(error.stack);
+            console.log('Error code: '+error.code);
+            console.log('Signal received: '+error.signal);
+          }
+          console.log(`canceled order ${uuid}: `+stdout);
+      });
+    }
   })
 }
 

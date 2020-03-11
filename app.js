@@ -1,21 +1,21 @@
-var fs = require('fs');
-const CoinpaprikaAPI = require('@coinpaprika/api-nodejs-client');
-const client = new CoinpaprikaAPI();
-var src = fs.readFileSync('./allToKMD/ourCoins')
-const marketMaker = require('./allToKMD/marketMaker')
 
+const marketMaker = require('./allToKMD/marketMaker')
 
 const {millisToNoon, millisToMidnight, millisTo22pm, illisTo23pm} = require('./timing')
 const {distribute} = require('./distributeKMD')
 
 const rain = () => {
-  // distribute available KMD to CCL holders
+  // creates maker sell orders (to KMD) for all coin balances except KMD
+
+
+
+  // cancels all open orders roughly after 10 hours
   setTimeout(() => {
-    distribute()
+    marketMaker.cancelOrders()
     setInterval(() => {
-      distribute()
+      marketMaker.cancelOrders()
     }, 24*60*60*1000) // wait 24 hours after first attempt
-  }, millisToMidnight) // first attempt at midnight
+  }, millisTo22pm) // first attempt at 22pm
 
   // sends all collected KMD to the dsitributor address
   setTimeout(() => {
@@ -24,9 +24,16 @@ const rain = () => {
       marketMaker.sendKMDtoDistributor(ourCoins[0])
     }, 24*60*60*1000) // wait 24 hours after first attempt
   }, millisTo23pm) // first attempt at 23pm
+
+
+  // distribute available KMD to CCL holders
+  setTimeout(() => {
+    distribute()
+    setInterval(() => {
+      distribute()
+    }, 24*60*60*1000) // wait 24 hours after first attempt
+  }, millisToMidnight) // first attempt at midnight
 }
-
-
 
 setTimeout(() => { //allow for 60 secs for connecting to all ourCoins
   rain()
