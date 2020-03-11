@@ -41,7 +41,7 @@ module.exports.updateBalance = (coin) => {
 //place an order selling the specified coin for KMD
 module.exports.placeOrder = (coin, kmdCoin) => {
   // !!!!!!!!!!! make sure amount is larger than 1 usd !!!!!!!!!!!!!
-  if (coin.balance * coin.price_usd > 1.0) { //only create orders for balance with an equivalent value larger than 1 US$
+  if ((coin.balance * coin.price_usd > 1.0) && (coin.balance > 0.008)) { //only create orders for balance with an equivalent value larger than 1 US$, and orders for which the balance larger than 0.00777
     const balanceToSell = 0.99 * coin.balance // keep 1% for fees
     const priceToOffer = 0.95 * coin.price_usd/kmdCoin.price_usd // offer an attractive price such that trade will follow through with high probability
     const url = `"http://127.0.0.1:7783" --data "{\\"userpass\\":\\"${userpass}\\",\\"method\\":\\"setprice\\",\\"base\\":\\"${coin.name}\\",\\"rel\\":\\"KMD\\",\\"price\\":\\"${priceToOffer}\\",\\"volume\\":\\"${balanceToSell}\\"}"`
