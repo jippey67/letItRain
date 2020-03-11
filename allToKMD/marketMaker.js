@@ -1,6 +1,18 @@
+const CoinpaprikaAPI = require('@coinpaprika/api-nodejs-client')
+const client = new CoinpaprikaAPI();
+const fs = require('fs')
+var ourCoins = JSON.parse(fs.readFileSync('./ourCoins', 'utf8'))
 
 const { exec } = require('child_process');
 const userpass = process.env.USERPASS
+
+// // creat an array with all COIN names
+// const coins = []
+// ourCoins.forEach(coin => {
+//   coins.push(coin.name)
+// })
+
+
 
 // connect the marketmaker to the specified coin
 module.exports.connectCoin = (coin) => {
@@ -23,7 +35,7 @@ module.exports.connectCoin = (coin) => {
 }
 
 //updates balance of the specified coin
-module.exports.updateBalance = (coin) => {
+updateBalance = (coin) => {
   const url = `"http://127.0.0.1:7783" --data "{\\"userpass\\":\\"${userpass}\\",\\"method\\":\\"my_balance\\",\\"coin\\":\\"${coin.name}\\"}"`
   const command = `curl --url ` + url
   exec(command, (error, stdout, stderr) => {
@@ -39,22 +51,38 @@ module.exports.updateBalance = (coin) => {
 }
 
 //place an order selling the specified coin for KMD
-module.exports.placeOrder = (coin, kmdCoin) => {
-  // !!!!!!!!!!! make sure amount is larger than 1 usd !!!!!!!!!!!!!
-  if ((coin.balance * coin.price_usd > 1.0) && (coin.balance > 0.008)) { //only create orders for balance with an equivalent value larger than 1 US$, and orders for which the balance larger than 0.00777
-    const balanceToSell = 0.99 * coin.balance // keep 1% for fees
-    const priceToOffer = 0.95 * coin.price_usd/kmdCoin.price_usd // offer an attractive price such that trade will follow through with high probability
-    const url = `"http://127.0.0.1:7783" --data "{\\"userpass\\":\\"${userpass}\\",\\"method\\":\\"setprice\\",\\"base\\":\\"${coin.name}\\",\\"rel\\":\\"KMD\\",\\"price\\":\\"${priceToOffer}\\",\\"volume\\":\\"${balanceToSell}\\"}"`
-    const command = `curl --url ` + url
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        console.log(error.stack);
-        console.log('Error code: '+error.code);
-        console.log('Signal received: '+error.signal);
+module.exports.placeOrders = (allCoins) => {
+  // update balances for all coins first
+  allCoins.forEach(coin => {
+    updateBalance(coin)
+  })
+  client.getAllTickers({}).then(tickerObj => {
+    tickerObj.forEach(ticker => {
+      if (coins.indexOf(ticker.symbol) !== -1) {
+        console.log(ticker.symbol, ticker.quotes.USD.price)
+        coins[coins.indexOf(ticker.symbol)].lastQuote = ticker.quotes.USD.price
       }
-      console.log('placed order: '+stdout);
     })
-  }
+  })
+
+  setTimeout(() => {
+    allCoins.forEach(coin => {
+      if ((coin.balance * coin.price_usd > 1.0) && (coin.balance > 0.008)) { //only create orders for balance with an equivalent value larger than 1 US$, and orders for which the balance larger than 0.00777
+        const balanceToSell = 0.99 * coin.balance // keep 1% for fees
+        const priceToOffer = 0.95 * coin.price_usd/kmdCoin.price_usd // offer an attractive price such that trade will follow through with high probability
+        const url = `"http://127.0.0.1:7783" --data "{\\"userpass\\":\\"${userpass}\\",\\"method\\":\\"setprice\\",\\"base\\":\\"${coin.name}\\",\\"rel\\":\\"KMD\\",\\"price\\":\\"${priceToOffer}\\",\\"volume\\":\\"${balanceToSell}\\"}"`
+        const command = `curl --url ` + url
+        exec(command, (error, stdout, stderr) => {
+          if (error) {
+            console.log(error.stack);
+            console.log('Error code: '+error.code);
+            console.log('Signal received: '+error.signal);
+          }
+          console.log('placed order: '+stdout);
+        })
+      }
+    })
+  }, 5000) // wait 5 secs to perform this
 }
 
 //view all open orders on marketmaker

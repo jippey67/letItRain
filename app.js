@@ -1,5 +1,8 @@
 
 const marketMaker = require('./allToKMD/marketMaker')
+const fs = require('fs')
+var ourCoins = JSON.parse(fs.readFileSync('./ourCoins', 'utf8'))
+
 
 const {millisToNoon, millisToMidnight, millisTo22pm, illisTo23pm} = require('./timing')
 const {distribute} = require('./distributeKMD')
