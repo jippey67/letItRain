@@ -20,7 +20,7 @@ var swapVarCCL = true;
 
 const distribute = () => {
 //module.exports = function () {
-  ltf.log('KMD distrubution started at:', new Date())
+  ltf.log('KMD distrubution started at: ' + new Date())
   // Check if sending address has a balance > 0
   requestKMD(requestStringKMDbalance, (error, body, response) => {
     if (error) {
@@ -29,7 +29,7 @@ const distribute = () => {
     }
     // Get KMD balance in KMD instead of satoshi
     const kmdBalance = json.decode(body).balance/satoshisPerKMD;
-    ltf.log('balance:', kmdBalance);
+    ltf.log('balance: ' + kmdBalance);
 
     // Get CCL rich list
     requestCCL(requestStringCCL, (error, response, body) => {

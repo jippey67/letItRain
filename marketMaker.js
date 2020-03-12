@@ -109,7 +109,7 @@ module.exports.sendKMDtoDistributor = (coin) => {
   var kmdBalance = 0
   if (coin.name == 'KMD') {
     kmdBalance = coin.balance - 0.001 // subtract transaction fee
-    ltf.log('KMD balance: ',kmdBalance)
+    ltf.log('KMD balance: ' + kmdBalance)
     if (kmdBalance > 0.9) {
       const url = `"http://127.0.0.1:7783" --data "{\\"method\\":\\"withdraw\\",\\"coin\\":\\"KMD\\",\\"to\\":\\"RXEbBErWKAKvAbtdBvk9PivvHMejwstJbF\\",\\"amount\\":\\"${kmdBalance}\\",\\"userpass\\":\\"${userpass}\\"}"`
       const command = `curl --url ` + url
