@@ -91,14 +91,14 @@ const distribute = () => {
           }
         });
         const rawTransactionString = `~/komodo/src/komodo-cli createrawtransaction '${JSON.stringify(transActUtxos)}' '${JSON.stringify(rainTransactions)}'`;
-        ltf.log(`rawTransactionString: ${rawTransactionString}`);
+        ltf.log(`rawTransactionString: ${rawTransactionString}\n`);
         requestKMD(rawTransactionString, (error, body, response) => {
           if (error) {
             console.log(`KMDserver error: ${error}`);
             return;
           }
           const rawHexString = body;
-          ltf.log(`rawHexString: ${rawHexString}`)
+          ltf.log(`rawHexString: ${rawHexString}\n`)
           // Sign transaction
           const signString = `~/komodo/src/komodo-cli signrawtransaction ${rawHexString}`;
           requestKMD(signString, (error, body, response) => {
@@ -106,7 +106,7 @@ const distribute = () => {
               console.log(`KMDserver error: ${error}`);
               return;
             }
-            ltf.log.log(`Transaction object: ${body}`);
+            ltf.log(`Transaction object: ${body}\n`);
             body=json.decode(body);
             const transactionString = body.hex;
             const succes = body.complete;
@@ -119,7 +119,7 @@ const distribute = () => {
                   return;
                 }
                 const transactionHash = body;
-                ltf.log(`transactionHash: ${transactionHash}`);
+                ltf.log(`transactionHash: ${transactionHash}\n`);
               })
             } else if (succes) {
               console.log(`A successful rawtransaction was created, but not sent to the network.\n`);

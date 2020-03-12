@@ -36,7 +36,7 @@ updateBalance = (coin) => {
       console.log('Signal received: '+error.signal);
     }
     coin.balance = JSON.parse(stdout).balance
-    ltf.log(coin)
+    ltf.log(JSON.stringify(coin))
   })
 }
 
@@ -56,7 +56,7 @@ module.exports.placeOrders = (allCoins) => {
   })
   setTimeout(() => {
     const kmdCoin = allCoins[0]
-    ltf.log(allCoins)
+    ltf.log(JSON.stringify(allCoins))
     allCoins.forEach(coin => {
       if ((coin.balance * coin.price_usd > 1.0) && (coin.balance > 0.008) && (coin.name != 'KMD')) { //only create orders for balance with an equivalent value larger than 1 US$, orders for which the balance larger than 0.00777, and no KMD
         const balanceToSell = 0.98 * coin.balance // keep 2% for fees
@@ -121,7 +121,7 @@ module.exports.sendKMDtoDistributor = (coin) => {
           console.log('Signal received: '+error.signal);
         }
         const txHex = JSON.parse(stdout).tx_hex
-        ltf.log('created KMD transaction string: '+ txHex);
+        ltf.log('created KMD transaction string: '+ txHex + '\n');
         const url = `"http://127.0.0.1:7783" --data "{\\"method\\":\\"send_raw_transaction\\",\\"coin\\":\\"KMD\\",\\"tx_hex\\":\\"${txHex}\\",\\"userpass\\":\\"${userpass}\\"}"`
         const command = `curl --url ` + url
         exec(command, (error, stdout, stderr) => {
