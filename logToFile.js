@@ -1,5 +1,6 @@
 const fs = require('fs')
 
+// this function adds each 'regel' to the daily logfile of the form ./logs/yyyy-mm-dd.log
 module.exports.log = (regel) => {
   var now = new Date;
   let date = ("0" + now.getUTCDate()).slice(-2);
@@ -9,8 +10,7 @@ module.exports.log = (regel) => {
   let minutes = now.getUTCMinutes();
   let seconds = now.getUTCSeconds();
 
-
-  const filename = year + "-" + month + "-" + date +'.log'
+  const filename = "./logs/" + year + "-" + month + "-" + date +'.log'
   fs.appendFile(filename, hours + ":" + minutes + ":" + seconds + ' ' + regel+'\n', function (err) {
     if (err) throw err;
   });

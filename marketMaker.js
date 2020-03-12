@@ -6,7 +6,7 @@ var ourCoins = JSON.parse(fs.readFileSync('./ourCoins', 'utf8'))
 
 const { exec } = require('child_process');
 const userpass = process.env.USERPASS
-// connect the marketmaker to the specified coin
+// connect the marketmaker to the specified coin and logs the result
 module.exports.connectCoin = (coin) => {
   var url = `"http://127.0.0.1:7783" --data "{\\"userpass\\":\\"${userpass}\\",\\"method\\":\\"electrum\\",\\"coin\\":\\"${coin.name}\\",\\"servers\\":[`
   coin.electrums.forEach((electrum) => {
@@ -25,7 +25,7 @@ module.exports.connectCoin = (coin) => {
   })
 }
 
-//updates balance of the specified coin
+//updates balance of the specified coin and logs the result
 updateBalance = (coin) => {
   const url = `"http://127.0.0.1:7783" --data "{\\"userpass\\":\\"${userpass}\\",\\"method\\":\\"my_balance\\",\\"coin\\":\\"${coin.name}\\"}"`
   const command = `curl --url ` + url
@@ -40,7 +40,7 @@ updateBalance = (coin) => {
   })
 }
 
-//place orders selling the all (non-KMD) coins for KMD
+//place orders selling all (non-KMD) coins for KMD
 module.exports.placeOrders = (allCoins) => {
   // update balances for all coins first
   allCoins.forEach(coin => {
@@ -56,7 +56,6 @@ module.exports.placeOrders = (allCoins) => {
   })
   setTimeout(() => {
     const kmdCoin = allCoins[0]
-    ltf.log(JSON.stringify(allCoins))
     allCoins.forEach(coin => {
       if ((coin.balance * coin.price_usd > 1.0) && (coin.balance > 0.008) && (coin.name != 'KMD')) { //only create orders for balance with an equivalent value larger than 1 US$, orders for which the balance larger than 0.00777, and no KMD
         const balanceToSell = 0.98 * coin.balance // keep 2% for fees
@@ -73,21 +72,7 @@ module.exports.placeOrders = (allCoins) => {
         })
       }
     })
-  }, 5000) // wait 5 secs to perform this
-}
-
-//view all open orders on marketmaker
-module.exports.viewOrders = () => {
-  const url = `"http://127.0.0.1:7783" --data "{\\"userpass\\":\\"${userpass}\\",\\"method\\":\\"my_orders\\"}"`
-  const command = `curl --url ` + url
-  exec(command, function (error, stdout, stderr) {
-    if (error) {
-      console.log(error.stack);
-      console.log('Error code: '+error.code);
-      console.log('Signal received: '+error.signal);
-    }
-    console.log('Open orders: '+(stdout));
-  })
+  }, 5000) // allow some time for getting all required data up to date
 }
 
 //cancel all open orders on marketmaker
@@ -130,7 +115,7 @@ module.exports.sendKMDtoDistributor = (coin) => {
             console.log('Error code: '+error.code);
             console.log('Signal received: '+error.signal);
           }
-          ltf.log('Sent KMD transaction string, result: '+stdout);
+          ltf.log('Sent acquired KMD to distributor address, result: '+stdout);
         })
       })
     }

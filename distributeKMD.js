@@ -10,7 +10,6 @@ const transActFee = 0.0001; // in KMD
 const minimumPayout = 0.0001; // payouts below this level are ignored
 const satoshisPerKMD = 100000000;
 const kmdAddress = process.env.KMD_DIST_ADDR; //address to rain from
-//const richListDepth = 150; //number of addresses to fetch, balance ordered descending
 const requestKMD = exec; // default setting runs the program as if on KMD full node
 const requestStringKMDbalance = `~/komodo/src/komodo-cli getaddressbalance '{"addresses": ["${kmdAddress}"]}'`;
 const requestStringKMDunspent = `~/komodo/src/komodo-cli listunspent 0 99999999  '["${kmdAddress}"]'`;
@@ -119,7 +118,7 @@ const distribute = () => {
                   return;
                 }
                 const transactionHash = body;
-                ltf.log(`transactionHash: ${transactionHash}\n`);
+                ltf.log(`KMD distribution transactionHash: ${transactionHash}\n`);
               })
             } else if (succes) {
               console.log(`A successful rawtransaction was created, but not sent to the network.\n`);
