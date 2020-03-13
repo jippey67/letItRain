@@ -42,9 +42,10 @@ updateBalance = (coin) => {
 
 //place orders selling all (non-KMD) coins for KMD
 module.exports.placeOrders = (allCoins) => {
-  // update balances for all coins first
+  // update balances and remove old price info for all coins first
   allCoins.forEach(coin => {
     updateBalance(coin)
+    delete coin.price_usd
   })
   // then update the US$ quotes for all coins
   client.getAllTickers({}).then(tickerObj => {
