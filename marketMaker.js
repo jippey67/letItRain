@@ -36,7 +36,7 @@ updateBalance = (coin) => {
       console.log('Signal received: '+error.signal);
     }
     coin.balance = JSON.parse(stdout).balance
-    ltf.log(JSON.stringify(coin))
+    //ltf.log(JSON.stringify(coin))
   })
 }
 
@@ -58,6 +58,7 @@ module.exports.placeOrders = (allCoins) => {
   setTimeout(() => {
     const kmdCoin = allCoins[0]
     allCoins.forEach(coin => {
+      ltf.log(JSON.stringify(coin))
       if ((coin.balance * coin.price_usd > 1.0) && (coin.balance > 0.008) && (coin.name != 'KMD')) { //only create orders for balance with an equivalent value larger than 1 US$, orders for which the balance larger than 0.00777, and no KMD
         const balanceToSell = 0.98 * coin.balance // keep 2% for fees
         const priceToOffer = 0.95 * coin.price_usd/kmdCoin.price_usd // offer an attractive price such that trade will follow through with high probability
