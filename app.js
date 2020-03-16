@@ -4,6 +4,9 @@ const fs = require('fs')
 var ourCoins = JSON.parse(fs.readFileSync('./ourCoins', 'utf8'))
 const {millisToNoon, millisToMidnight, millisTo22pm, millisTo23pm} = require('./timing')
 const {distribute} = require('./distributeKMD')
+const ltf = require('./logToFile')
+
+ltf.log('app restarted');
 
 // connects the market maker to all the coins we want to trade in
 ourCoins.forEach(coin => {
