@@ -25,6 +25,18 @@ module.exports.connectCoin = (coin) => {
   })
 }
 
+//helper function to sort (descending) an array of JSON objects on a key's values
+getSortOrder = (prop) => {
+    return function(a, b) {
+        if (a[prop] > b[prop]) {
+            return -1;
+        } else if (a[prop] < b[prop]) {
+            return 1;
+        }
+        return 0;
+    }
+}
+
 //updates balance of the specified coin and logs the result
 updateBalance = (coin) => {
   const url = `"http://127.0.0.1:7783" --data "{\\"userpass\\":\\"${userpass}\\",\\"method\\":\\"my_balance\\",\\"coin\\":\\"${coin.name}\\"}"`
@@ -40,12 +52,36 @@ updateBalance = (coin) => {
   })
 }
 
+getBestBid = (coin) => {
+  const url = `"http://127.0.0.1:7783" --data "{\\"userpass\\":\\"${userpass}\\",\\"method\\":\\"orderbook\\",\\"base\\":\\"${coin.name}\\",\\"rel\\":\\"KMD\\"}"`
+  const command = `curl --url ` + url
+  exec(command, (error, stdout, stderr) => {
+    if (error) {
+      console.log(error.stack);
+      console.log('Error code: '+error.code);
+      console.log('Signal received: '+error.signal);
+    }
+    var bids = JSON.parse(stdout).bids
+    if (bids.length != 0) {
+      bids.sort(getSortOrder("price"))
+      coin.bestBidPrice = bids[0].price
+      coin.bestBidMaxVol = bids[0].maxvolume
+    }
+  })
+}
+
 //place orders selling all (non-KMD) coins for KMD
 module.exports.placeOrders = (allCoins) => {
-  // update balances and remove old price info for all coins first
+  // update balances and remove old price and orderbook info for all coins first
   allCoins.forEach(coin => {
-    updateBalance(coin)
+    delete coin.balance
     delete coin.price_usd
+    delete coin.bestBidPrice
+    delete coin.bestBidMaxVol
+    updateBalance(coin)
+    if (coin.name != 'KMD') {
+      getBestBid(coin)
+    }
   })
   // then update the US$ quotes for all coins
   client.getAllTickers({}).then(tickerObj => {
@@ -55,23 +91,40 @@ module.exports.placeOrders = (allCoins) => {
       }
     })
   })
+  // and finally create the orders
   setTimeout(() => {
     const kmdCoin = allCoins[0]
     allCoins.forEach(coin => {
       ltf.log(JSON.stringify(coin))
       if ((coin.balance * coin.price_usd > 1.0) && (coin.balance > 0.008) && (coin.name != 'KMD')) { //only create orders for balance with an equivalent value larger than 1 US$, orders for which the balance larger than 0.00777, and no KMD
-        const balanceToSell = 0.98 * coin.balance // keep 2% for fees
+        var balanceToSell = 0.98 * coin.balance // keep 2% for fees
         const priceToOffer = 0.95 * coin.price_usd/kmdCoin.price_usd // offer an attractive price such that trade will follow through with high probability
-        const url = `"http://127.0.0.1:7783" --data "{\\"userpass\\":\\"${userpass}\\",\\"method\\":\\"setprice\\",\\"base\\":\\"${coin.name}\\",\\"rel\\":\\"KMD\\",\\"price\\":\\"${priceToOffer}\\",\\"volume\\":\\"${balanceToSell}\\"}"`
-        const command = `curl --url ` + url
-        exec(command, (error, stdout, stderr) => {
-          if (error) {
-            console.log(error.stack);
-            console.log('Error code: '+error.code);
-            console.log('Signal received: '+error.signal);
+        if (coin.bestBidPrice > priceToOffer) { // market offers more than we woudl do ourselves: create taker order
+          if (balanceToSell > coin.bestBidMaxVol) { // make sure only the volume available at the best price is traded
+            balanceToSell = coin.bestBidMaxVol
           }
-          ltf.log('placed order: '+stdout);
-        })
+          const url = `"http://127.0.0.1:7783" --data "{\\"userpass\\":\\"${userpass}\\",\\"method\\":\\"sell\\",\\"base\\":\\"${coin.name}\\",\\"rel\\":\\"KMD\\",\\"volume\\":\\"${balanceToSell}\\",\\"price\\":\\"${coin.bestBidPrice}\\"}"`
+          const command = `curl --url ` + url
+          exec(command, (error, stdout, stderr) => {
+            if (error) {
+              console.log(error.stack);
+              console.log('Error code: '+error.code);
+              console.log('Signal received: '+error.signal);
+            }
+            ltf.log('placed order: '+stdout);
+          })
+        } else { // create maker order at out set price
+          const url = `"http://127.0.0.1:7783" --data "{\\"userpass\\":\\"${userpass}\\",\\"method\\":\\"setprice\\",\\"base\\":\\"${coin.name}\\",\\"rel\\":\\"KMD\\",\\"price\\":\\"${priceToOffer}\\",\\"volume\\":\\"${balanceToSell}\\"}"`
+          const command = `curl --url ` + url
+          exec(command, (error, stdout, stderr) => {
+            if (error) {
+              console.log(error.stack);
+              console.log('Error code: '+error.code);
+              console.log('Signal received: '+error.signal);
+            }
+            ltf.log('placed order: '+stdout);
+          })
+        }
       }
     })
   }, 5000) // allow some time for getting all required data up to date
