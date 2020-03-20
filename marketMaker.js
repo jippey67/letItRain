@@ -8,12 +8,23 @@ const { exec } = require('child_process');
 const userpass = process.env.USERPASS
 // connect the marketmaker to the specified coin and logs the result
 module.exports.connectCoin = (coin) => {
-  var url = `"http://127.0.0.1:7783" --data "{\\"userpass\\":\\"${userpass}\\",\\"method\\":\\"electrum\\",\\"coin\\":\\"${coin.name}\\",\\"servers\\":[`
-  coin.electrums.forEach((electrum) => {
-    url += `{\\"url\\":\\"${electrum}\\"},`
-  })
-  url = url.slice(0, -1);
-  url += `]}"`
+  var url;
+  if (coin.method == 'electrum') { // connect to UTXO based coins
+    url = `"http://127.0.0.1:7783" --data "{\\"userpass\\":\\"${userpass}\\",\\"method\\":\\"electrum\\",\\"coin\\":\\"${coin.name}\\",\\"servers\\":[`
+    coin.electrums.forEach((electrum) => {
+      url += `{\\"url\\":\\"${electrum}\\"},`
+    })
+    url = url.slice(0, -1);
+    url += `]}"`
+  }
+  else if (coin.method == 'enable') { // connect to ETH / ERC20 coins
+    url = `"http://127.0.0.1:7783" --data "{\\"userpass\\":\\"${userpass}\\",\\"method\\":\\"enable\\",\\"coin\\":\\"${coin.name}\\",\\"urls\\":[`
+    coin.urls.forEach((url) => {
+      url += `{\\"${url}\\"},`
+    })
+    // url = url.slice(0, -1);
+    // url += `],\\"swap_contract_address\\":\\"0x8500AFc0bc5214728082163326C2FF0C73f4a871\\"}"`
+  }
   const command = `curl --url ` + url
   exec(command, (error, stdout, stderr) => {
     if (error) {
@@ -176,6 +187,6 @@ module.exports.sendKMDtoDistributor = (coin) => {
           })
         })
       }
-    }, 5000) // allow some time for getting KMD balance to get up to date    
+    }, 5000) // allow some time for getting KMD balance to get up to date
   }
 }
