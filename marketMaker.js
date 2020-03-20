@@ -22,8 +22,8 @@ module.exports.connectCoin = (coin) => {
     coin.urls.forEach((url) => {
       url += `{\\"${url}\\"},`
     })
-    // url = url.slice(0, -1);
-    // url += `],\\"swap_contract_address\\":\\"0x8500AFc0bc5214728082163326C2FF0C73f4a871\\"}"`
+    url = url.slice(0, -1);
+    url += `],\\"swap_contract_address\\":\\"0x8500AFc0bc5214728082163326C2FF0C73f4a871\\"}"`
   }
   const command = `curl --url ` + url
   exec(command, (error, stdout, stderr) => {
