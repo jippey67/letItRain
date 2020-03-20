@@ -20,7 +20,7 @@ module.exports.connectCoin = (coin) => {
   else if (coin.method == 'enable') { // connect to ETH / ERC20 coins
     url = `"http://127.0.0.1:7783" --data "{\\"userpass\\":\\"${userpass}\\",\\"method\\":\\"enable\\",\\"coin\\":\\"${coin.name}\\",\\"urls\\":[`
     coin.urls.forEach((server) => {
-      url += `{\\"${server}\\"},`
+      url += `\\"${server}\\",`
     })
     url = url.slice(0, -1);
     url += `],\\"swap_contract_address\\":\\"0x8500AFc0bc5214728082163326C2FF0C73f4a871\\"}"`
