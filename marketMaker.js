@@ -148,31 +148,34 @@ module.exports.cancelOrders = () => {
 module.exports.sendKMDtoDistributor = (coin) => {
   var kmdBalance = 0
   if (coin.name == 'KMD') {
-    kmdBalance = coin.balance - 0.001 // subtract transaction fee
-    ltf.log('KMD balance: ' + kmdBalance)
-    if (kmdBalance > 0.9) {
-      const url = `"http://127.0.0.1:7783" --data "{\\"method\\":\\"withdraw\\",\\"coin\\":\\"KMD\\",\\"to\\":\\"RXEbBErWKAKvAbtdBvk9PivvHMejwstJbF\\",\\"amount\\":\\"${kmdBalance}\\",\\"userpass\\":\\"${userpass}\\"}"`
-      const command = `curl --url ` + url
-      ltf.log(command)
-      exec(command, function (error, stdout, stderr) {
-        if (error) {
-          console.log(error.stack);
-          console.log('Error code: '+error.code);
-          console.log('Signal received: '+error.signal);
-        }
-        const txHex = JSON.parse(stdout).tx_hex
-        ltf.log('created KMD transaction string: '+ txHex + '\n');
-        const url = `"http://127.0.0.1:7783" --data "{\\"method\\":\\"send_raw_transaction\\",\\"coin\\":\\"KMD\\",\\"tx_hex\\":\\"${txHex}\\",\\"userpass\\":\\"${userpass}\\"}"`
+    updateBalance(coin)
+    setTimeout((coin) => {
+      kmdBalance = coin.balance - 0.001 // subtract transaction fee
+      ltf.log('KMD balance: ' + kmdBalance)
+      if (kmdBalance > 0.9) {
+        const url = `"http://127.0.0.1:7783" --data "{\\"method\\":\\"withdraw\\",\\"coin\\":\\"KMD\\",\\"to\\":\\"RXEbBErWKAKvAbtdBvk9PivvHMejwstJbF\\",\\"amount\\":\\"${kmdBalance}\\",\\"userpass\\":\\"${userpass}\\"}"`
         const command = `curl --url ` + url
-        exec(command, (error, stdout, stderr) => {
+        ltf.log(command)
+        exec(command, function (error, stdout, stderr) {
           if (error) {
             console.log(error.stack);
             console.log('Error code: '+error.code);
             console.log('Signal received: '+error.signal);
           }
-          ltf.log('Sent acquired KMD to distributor address, result: '+stdout);
+          const txHex = JSON.parse(stdout).tx_hex
+          ltf.log('created KMD transaction string: '+ txHex + '\n');
+          const url = `"http://127.0.0.1:7783" --data "{\\"method\\":\\"send_raw_transaction\\",\\"coin\\":\\"KMD\\",\\"tx_hex\\":\\"${txHex}\\",\\"userpass\\":\\"${userpass}\\"}"`
+          const command = `curl --url ` + url
+          exec(command, (error, stdout, stderr) => {
+            if (error) {
+              console.log(error.stack);
+              console.log('Error code: '+error.code);
+              console.log('Signal received: '+error.signal);
+            }
+            ltf.log('Sent acquired KMD to distributor address, result: '+stdout);
+          })
         })
-      })
-    }
+      }
+    }, 5000) // allow some time for getting KMD balance to get up to date    
   }
 }
