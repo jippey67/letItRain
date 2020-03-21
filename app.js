@@ -15,6 +15,7 @@ ourCoins.forEach(coin => {
 
 const rain = () => {
   // creates maker sell orders (to KMD) for all coin balances except KMD
+  console.log('placeOrders will run in ', millisToNoon/(1000*60*60), 'hours')
   setTimeout(() => {
     marketMaker.placeOrders(ourCoins)
     setInterval(() => {
@@ -23,6 +24,7 @@ const rain = () => {
   }, millisToNoon) // first attempt at noon
 
   // cancels all open orders roughly after they lived for 10 hours
+  console.log('cancelOrders will run in ', millisTo22pm/(1000*60*60), 'hours')
   setTimeout(() => {
     marketMaker.cancelOrders()
     setInterval(() => {
@@ -31,6 +33,7 @@ const rain = () => {
   }, millisTo22pm) // first attempt at 22pm
 
   // sends all collected KMD to the distributor address
+  console.log('sendKMDtoDistributor will run in ', millisTo23pm/(1000*60*60), 'hours')
   setTimeout(() => {
     marketMaker.sendKMDtoDistributor(ourCoins[0])
     setInterval(() => {
@@ -39,6 +42,7 @@ const rain = () => {
   }, millisTo23pm) // first attempt at 23pm
 
   // distribute available KMD to CCL holders
+  console.log('distribute will run in ', millisToMidnight/(1000*60*60), 'hours')
   setTimeout(() => {
     distribute()
     setInterval(() => {
@@ -47,6 +51,6 @@ const rain = () => {
   }, millisToMidnight) // first attempt at midnight
 }
 
-setTimeout(() => { //allow for 60 secs for connecting to all ourCoins
+setTimeout(() => { //allow for 30 secs for connecting to all ourCoins
   rain()
-},60000)
+},30000)
