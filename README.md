@@ -33,7 +33,11 @@ Now it's time to run the letItRain app. You will need node.js and npm for this. 
 
 ## When does it do what?
 letItRain runs on UTC time.
-* 12 pm: For all available funds (except KMD) a maker order is created to trade them for KMD. The price is set at a discount to facilitate quick trades. Orders are only created for values over 1US$ and order sizes over 0.008 (marketmaker actually requires them to be larger than 0.00777 :smile:) 
+* 12 pm: For all available funds (except KMD) an order is created to trade them for KMD. Depending on the orderbook a maker order is created or an available order is taken, whichever delivers more KMD. For a maker order the price is set at a discount to facilitate quick trades. Orders are only created for values over 1US$ and order sizes over 0.008 (marketmaker actually requires them to be larger than 0.00777 :smile:) 
 * 10 pm: All open orders are cancelled, just to make sure...
 * 11 pm: all gathered KMD is sent to the KMD address of the distributor. Only amounts larger than 0.001 KMD are sent to avoid dust errors. 
 * 12 am: all KMD on the distributor address is distributed over the entitled addresses.
+
+## Some remarks
+* Contrary to what the documentation tells, mm2 still runs on net id '9999' instead of the mentioned '0'.
+* The mm2 requires some ETH as gas for ERC-20 token trades. letItRain makes sure that an existing ETH balance will not be drained to make sure eventual ERC-20 trades can successfully complete. If you build a letItRain system from scratch, make sure to fund the mm2 ETH address with some change.
