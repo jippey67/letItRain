@@ -39,7 +39,7 @@ const rain = () => {
     setInterval(() => {
       marketMaker.sendKMDtoDistributor(ourCoins[0])
     }, 24*60*60*1000) // wait 24 hours after first attempt
-  }, 60000) //millisTo23pm) // first attempt at 23pm
+  }, millisTo23pm) // first attempt at 23pm
 
   // distribute available KMD to CCL holders
   console.log('distribute will run in ', millisToMidnight/(1000*60*60), 'hours')
