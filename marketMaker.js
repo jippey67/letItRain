@@ -160,7 +160,7 @@ module.exports.sendKMDtoDistributor = (coin) => {
   var kmdBalance = 0
   if (coin.name == 'KMD') {
     updateBalance(coin)
-    setTimeout((coin) => {
+    setTimeout(() => {
       kmdBalance = coin.balance - 0.001 // subtract transaction fee
       ltf.log('KMD balance: ' + kmdBalance)
       if (kmdBalance > 0.9) {
