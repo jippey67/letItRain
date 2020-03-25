@@ -80,7 +80,7 @@ const distribute = () => {
             "vout": utxos[index].vout
           });
         });
-        ltf.log(`Transaction UTXOs: ${JSON.stringify(transActUtxos)}`);
+        //ltf.log(`Transaction UTXOs: ${JSON.stringify(transActUtxos)}`);
 
         // create array of rain transactions
         var rainTransactions = {};
@@ -90,14 +90,14 @@ const distribute = () => {
           }
         });
         const rawTransactionString = `~/komodo/src/komodo-cli createrawtransaction '${JSON.stringify(transActUtxos)}' '${JSON.stringify(rainTransactions)}'`;
-        ltf.log(`rawTransactionString: ${rawTransactionString}\n`);
+        //ltf.log(`rawTransactionString: ${rawTransactionString}\n`);
         requestKMD(rawTransactionString, (error, body, response) => {
           if (error) {
             console.log(`KMDserver error: ${error}`);
             return;
           }
           const rawHexString = body;
-          ltf.log(`rawHexString: ${rawHexString}\n`)
+          //ltf.log(`rawHexString: ${rawHexString}\n`)
           // Sign transaction
           const signString = `~/komodo/src/komodo-cli signrawtransaction ${rawHexString}`;
           requestKMD(signString, (error, body, response) => {
@@ -105,7 +105,7 @@ const distribute = () => {
               console.log(`KMDserver error: ${error}`);
               return;
             }
-            ltf.log(`Transaction object: ${body}\n`);
+            //ltf.log(`Transaction object: ${body}\n`);
             body=json.decode(body);
             const transactionString = body.hex;
             const succes = body.complete;
