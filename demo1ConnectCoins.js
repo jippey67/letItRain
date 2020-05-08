@@ -5,5 +5,6 @@ var ourCoins = JSON.parse(fs.readFileSync('./ourCoins', 'utf8'))
 const {distribute} = require('./distributeKMD')
 const ltf = require('./logToFile')
 
-
-marketMaker.connectCoin(coin)
+ourCoins.forEach(coin => {
+  marketMaker.connectCoin(coin)
+})
