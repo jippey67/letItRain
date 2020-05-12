@@ -10,6 +10,6 @@
 {"name":"ZEC","method":"electrum","electrums":["electrum1.cipig.net:10058","electrum2.cipig.net:10058"]},
 {"name":"ETH","method":"enable","urls":["http://eth1.cipig.net:8555","http://eth2.cipig.net:8555"]},
 {"name":"DAI","method":"enable","urls":["http://eth1.cipig.net:8555","http://eth2.cipig.net:8555"]},
-{"name":"SAI","method":"enable","urls":["http://eth1.cipig.net:8555","http://eth2.cipig.net:8555"]}
+{"name":"SAI","method":"enable","urls":["http://eth1.cipig.net:8555","http://eth2.cipig.net:8555"]},
 {"name":"PAXG","method":"enable","urls":["http://eth1.cipig.net:8555","http://eth2.cipig.net:8555"]}
 ]
