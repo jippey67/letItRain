@@ -21,7 +21,7 @@
     "@coinpaprika/api-nodejs-client": "^1.2.0",
     "express": "^4.17.1",
     "json-simple": "^0.9.6",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.7",
     "request": "^2.88.0"
   }
 }
